@@ -1,10 +1,10 @@
 <?php
 require "config.php";
-require "sadmin.php";
+require "madmin.php";
 require "auth.php";
 require "reload.php";
 
-$userName = $SADMIN->getFirstname()." ".$SADMIN->getLastname();
+$userName = $MADMIN->getFirstname()." ".$MADMIN->getLastname();
 
 ?>
 <!DOCTYPE html>
@@ -144,12 +144,12 @@ $userName = $SADMIN->getFirstname()." ".$SADMIN->getLastname();
       <div class="hero-unit">
         <h1>Bonjour, <?=$userName?> !</h1>
 	<br />
-        <p>Ton solde payutc est de : <strong><? echo format_amount($SADMIN->getCredit()); ?> €</strong></p>
+        <p>Ton solde payutc est de : <strong><? echo format_amount($MADMIN->getCredit()); ?> €</strong></p>
       </div>
       <div class="row">
         <div class="span4" >
           <h2>Historique</h2>
-           <div><?php echo affichage_histo($SADMIN); ?></div>
+           <div><?php echo affichage_histo($MADMIN); ?></div>
         </div>
         <div class="span4">
           <h2>Rechargement</h2>

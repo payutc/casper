@@ -13,14 +13,14 @@ if(isset($_SESSION["loged"]) && $_SESSION["loged"] == 1) {
 	// tout vas bien on est loged ;)
 	// Si on a un cookie on récupére la session soap.
 	if(isset($_SESSION['cookies'])) { 
-		$SADMIN->_cookies = $_SESSION['cookies'];
+		$MADMIN->_cookies = $_SESSION['cookies'];
 		// Verification que la session soap n'a pas expiré. 
 		try {
-				$SADMIN->getFirstname();
+				$MADMIN->getFirstname();
 		} catch (Exception $e) {
 				session_destroy();
 				// On envoie sur le cas
-				header("Location: ".$CONF['cas_url']."/login?service=".$CONF['casper_url']);
+				header("Location: ".$MADMIN->getCasUrl()."/login?service=".$CONF['casper_url']);
 				exit();
 		}
 		
@@ -28,7 +28,7 @@ if(isset($_SESSION["loged"]) && $_SESSION["loged"] == 1) {
 		// On délogue par sécurité
 		session_destroy();
 		// On envoie sur le cas
-		header("Location: ".$CONF['cas_url']."/login?service=".$CONF['casper_url']);
+		header("Location: ".$MADMIN->getCasUrl()."/login?service=".$CONF['casper_url']);
 		exit();
 	}
 } else {
@@ -37,22 +37,26 @@ if(isset($_SESSION["loged"]) && $_SESSION["loged"] == 1) {
 	if(isset($_GET["ticket"])) {
 		// Connexion soap
 		$ticket = $_GET["ticket"];
-		$code = $SADMIN->loginCas($ticket, $CONF['casper_url']);
+		try {
+			$code = $MADMIN->loginCas($ticket, $CONF['casper_url']);
+		} catch (Exception $e) {
+				echo "<pre>".$e."</pre>";
+		}
 		if($code == 1)
 		{
-			$_SESSION['cookies'] = $SADMIN->_cookies;
+			$_SESSION['cookies'] = $MADMIN->_cookies;
 			$_SESSION['loged'] = 1;
 			// Pas obligatoire mais c'est mieux pour virer le ticket de la barre d'adresse
 			header("Location: ".$CONF['casper_url']);
 		  	exit();
 		} else {
-			echo $SADMIN->getErrorDetail($code);
+			echo $MADMIN->getErrorDetail($code);
 			exit();
 		}
 	} else {
 		//2. On renvoie sur le cas
 		session_destroy();
-		header("Location: ".$CONF['cas_url']."/login?service=".$CONF['casper_url']);
+		header("Location: ".$MADMIN->getCasUrl()."/login?service=".$CONF['casper_url']);
 		exit();
 	}
 }
