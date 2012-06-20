@@ -6,6 +6,16 @@ require "reload.php";
 
 $userName = $MADMIN->getFirstname()." ".$MADMIN->getLastname();
 
+if(isset($_GET["block"]))
+{
+  $MADMIN->blockMe();
+}
+
+if(isset($_GET["unblock"]))
+{
+  $MADMIN->deblock();
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -181,6 +191,11 @@ $userName = $MADMIN->getFirstname()." ".$MADMIN->getLastname();
                 Ton compte ne peut être rechargé sans dépasser le plafond maximum.
               </div>
             <?php } ?> 
+            <br />
+            <h2>Etat du compte <?=affichage_blocage($MADMIN)?></h2>
+            En cas de perte ou vol de ton badge.<br />
+            Tu peux ici, bloquer/débloquer la possibilité de payer avec ta carte.<br />
+            <?=button_blocage($MADMIN)?>
        </div>
         <div class="span4">
           <h2>Virement à un ami</h2>

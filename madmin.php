@@ -51,3 +51,21 @@ function affichage_histo($user) {
 	$return .= '<div class="pagination pagination-centered"><ul id="paging"></ul></div>';
 	return $return;
 }
+
+function affichage_blocage($Class) {
+	$b = $Class->isBlocked();
+	if($b == 1) {
+		return "<span class=\"label label-important\">Bloqué <i class=\"icon-remove icon-white\"></i></span>";
+	} else {
+		return "<span class=\"label label-success\">Débloqué <i class=\"icon-ok icon-white\"></i></span>";
+	}
+}
+
+function button_blocage($Class) {
+	$b = $Class->isBlocked();
+	if($b == 1) {
+		return "<a class=\"btn btn-success\" href=\"?unblock\">Débloquer mon compte</a>";
+	} else {
+		return "<a class=\"btn btn-danger\" href=\"?block\">Bloquer mon compte</a>";
+	}
+}
