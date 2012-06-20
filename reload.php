@@ -6,14 +6,14 @@ if(isset($_GET["reload"]))
 	{
 		$amount = $_POST["montant"] * 100;
 		$reload_value = $amount/100;
-		$can = $SADMIN->canReload($amount);
+		$can = $MADMIN->canReload($amount);
 		if($can == 1)
 		{
 			// On peut recharger
-			echo $SADMIN->reload($amount, $CONF['casper_url']);
+			echo $MADMIN->reload($amount, $CONF['casper_url']);
 			exit();
 		} else {
-			$error_reload = $SADMIN->getErrorDetail($can);
+			$error_reload = $MADMIN->getErrorDetail($can);
 		}
 	}
 }
