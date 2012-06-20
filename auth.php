@@ -5,7 +5,7 @@ session_start();
 if(isset($_GET["logout"]))
 {
 	session_destroy();
-	header("Location: ".$CONF['cas_url']."/logout?url=".$CONF['casper_url']);
+	header("Location: ".$MADMIN->getCasUrl()."/logout?url=".$CONF['casper_url']);
   exit();
 }
 
