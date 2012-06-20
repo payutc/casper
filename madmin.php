@@ -64,8 +64,8 @@ function affichage_blocage($Class) {
 function button_blocage($Class) {
 	$b = $Class->isBlocked();
 	if($b == 1) {
-		return "<a class=\"btn btn-success\" href=\"?unblock\">Débloquer mon compte</a>";
+		return "<a class=\"btn btn-success pull-right\" href=\"?unblock\">Débloquer mon compte</a>";
 	} else {
-		return "<a class=\"btn btn-danger\" href=\"?block\">Bloquer mon compte</a>";
+		return "<a class=\"btn btn-danger pull-right\" href=\"?block\">Bloquer mon compte</a>";
 	}
 }
