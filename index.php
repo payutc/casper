@@ -3,6 +3,7 @@ require "config.php";
 require "madmin.php";
 require "auth.php";
 require "reload.php";
+require "virement.php";
 
 $userName = $MADMIN->getFirstname()." ".$MADMIN->getLastname();
 
@@ -201,7 +202,7 @@ if(isset($_GET["unblock"]))
        </div>
         <div class="span4">
           <h2>Virement à un ami</h2>
-          <p>En construction</p>
+          <?=virement($MADMIN)?>
         </div>
       </div>
 
@@ -212,9 +213,13 @@ if(isset($_GET["unblock"]))
       </footer>
 
     </div> <!-- /container -->
+    <script src="js/jquery-1.7.2.min.js"></script>
+    <script src="js/bootstrap.js"></script>
     <script type="text/javascript">
             init();
             selectPage(1);
-    </script>  
+    </script>
+    <?=virement_js()?>
+    </script> 
   </body>
 </html>
