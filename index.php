@@ -169,7 +169,7 @@ $userName = $MADMIN->getFirstname()." ".$MADMIN->getLastname();
            <p><h6>Montant du rechargement : </h6><br />
            <div class="input-prepend input-append">
 						 	<span class="add-on">€</span>
-							<input name="montant" type="number" class="span1" min="<?=$CONF['rechargement_min']?>" max="<?=$CONF['rechargement_max']?>" value="<?=$reload_value?>" step="0.01" />
+							<input name="montant" type="number" class="span1" min="<?=$MADMIN->getMinReload()/100?>" max="<?=$MADMIN->getMaxReload()/100?>" value="<?=$reload_value?>" step="0.01" />
 							<button type="submit" class="btn btn-primary"><i class="icon-shopping-cart icon-white"></i> Recharger</button></p>
 					 </div>
           </form>
