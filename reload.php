@@ -24,8 +24,10 @@ if(isset($_GET["paybox"]))
 	if(isset($_GET["trans"])) {
 		if($_GET['paybox'] == 'erreur') {
 			header("Location: ".$CONF['casper_url']."?paybox=".$_GET["paybox"]."&NUMERR=".$_GET['NUMERR']);
+			exit();
 		} else {
 			header("Location: ".$CONF['casper_url']."?paybox=".$_GET["paybox"]);
+			exit();
 		}
 	}
 	

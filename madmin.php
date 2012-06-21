@@ -11,7 +11,9 @@ echo "</pre>";
 function get_histo($user) {
 	$depense = str_getcsv($user->getHistoriqueAchats(0, time()),';','"','\\');
 	$recharge = str_getcsv($user->getHistoriqueRecharge(0, time()),';','"','\\');
-	$histo = array_merge($depense, $recharge);
+	$virement_in = str_getcsv($user->getHistoriqueVirementIn(0, time()),';','"','\\');
+	$virement_out = str_getcsv($user->getHistoriqueVirementOut(0, time()),';','"','\\');
+	$histo = array_merge($depense, $recharge, $virement_out, $virement_in);
 	arsort($histo);
 	$return = array();
 	foreach ($histo as $elt)
@@ -23,6 +25,9 @@ function get_histo($user) {
 			$return[] = $line;
 		} else if (count($line) == 6) {
 			$line['type'] = "RECHARGEMENT";
+			$return[] = $line;
+		} else if (count($line) == 5){
+			$line['type'] = "VIREMENT".$line[4];
 			$return[] = $line;
 		}
 	}
@@ -42,8 +47,12 @@ function affichage_histo($user) {
 		if ($elt['type'] == "DEPENSE") 
 		{
 			$return .= '<td>'.date('d/m/y H:i',$elt[0]).'</td><td>'.$elt[1].' ('.$elt[4].')</td><td><span class="label label-important"> <i class="icon-minus icon-white"></i> '.format_amount($elt[6]).' €</span></td>';
-		} else {
+		} else if ($elt['type'] == "RECHARGEMENT") {
 			$return .= '<td>'.date('d/m/y H:i',$elt[0]).'</td><td>Rechargement</td><td><span class="label label-success"> <i class="icon-plus icon-white"></i> '.format_amount($elt[5]).' €</span></td>';
+		} else if ($elt['type'] == "VIREMENTin") {
+			$return .= '<td>'.date('d/m/y H:i',$elt[0]).'</td><td>Virement ('.$elt[2].' '.$elt[3].')</td><td><span class="label label-success"> <i class="icon-plus icon-white"></i> '.format_amount($elt[1]).' €</span></td>';
+		} else if ($elt['type'] == "VIREMENTout") {
+			$return .= '<td>'.date('d/m/y H:i',$elt[0]).'</td><td>Virement ('.$elt[2].' '.$elt[3].')</td><td><span class="label label-important"> <i class="icon-minus icon-white"></i> '.format_amount($elt[1]).' €</span></td>';
 		}
 		$return .= "</tr>";
 	}

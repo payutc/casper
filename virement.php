@@ -11,13 +11,23 @@ if(isset($_GET["virement"]))
 {
 	$montant = $_POST["montant"]*100;
 	$code = $MADMIN->transfert($montant, $_POST["userId"]);
+	sleep(1); // Gros HACK DEGEU, pour que le virement ai le temps de se faire et que l'historique puisse se charger avec le virement.
+			  // Les fonctions soap semblent asynchrone... 
+	header("Location: ".$CONF['casper_url']."?vir=$code&amount=$montant");
+	exit();
+}
+
+if(isset($_GET["vir"]))
+{
+	$code = $_GET["vir"];
+	$montant = $_GET["amount"]/100;
 	if($code != 1) {
 		$virement_msg = '<div class="alert alert-error">
 							'.$MADMIN->getErrorDetail($code).'
 						</div>';
 	} else {
 		$virement_msg = '<div class="alert alert-success">
-				Le virement de '.$_POST["montant"].'€ à réussi.
+				Le virement de '.$montant.'€ à réussi.
 			</div>';
 	}
 }
