@@ -22,7 +22,7 @@ if(isset($_GET["unblock"]))
 <html lang="fr">
   <head>
     <meta charset="utf-8">
-    <title><?=$CONF["title"]?></title>
+    <title><?php echo $CONF["title"]?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Le styles -->
@@ -142,7 +142,7 @@ if(isset($_GET["unblock"]))
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="#"><?=$CONF["title"]?></a>
+          <a class="brand" href="#"><?php echo $CONF["title"]?></a>
           <div class="nav-collapse">
             <p class="navbar-text pull-right"><a href="?logout">déconnexion</a></p>
           </div>
@@ -153,9 +153,9 @@ if(isset($_GET["unblock"]))
     <div class="container">
 
       <div class="hero-unit">
-        <h1>Bonjour, <?=$userName?> !</h1>
+        <h1>Bonjour, <?php echo $userName?> !</h1>
 	<br />
-        <p>Ton solde payutc est de : <strong><? echo format_amount($MADMIN->getCredit()); ?> €</strong></p>
+        <p>Ton solde payutc est de : <strong><?php echo format_amount($MADMIN->getCredit()); ?> €</strong></p>
       </div>
       <div class="row">
         <div class="span4" >
@@ -170,20 +170,20 @@ if(isset($_GET["unblock"]))
             if($max_reload != 0) { 
   						if(isset($error_reload)) { ?>
             <div class="alert alert-error">
-  						<?=$error_reload?>
+  						<?php echo $error_reload?>
   					</div>
   					<?php } ?>
   					<?php
   						if(isset($success_reload)) { ?>
             <div class="alert alert-success">
-  						<?=$success_reload?>
+  						<?php echo $success_reload?>
   					</div>
   					<?php } ?>
-  					<form action="<?=$_SERVER['PHP_SELF']?>?reload" method="post" class="well form-inline">
+  					<form action="<?php echo $_SERVER['PHP_SELF']?>?reload" method="post" class="well form-inline">
              <p><h6>Montant du rechargement : </h6><br />
              <div class="input-prepend input-append">
   						 	<span class="add-on">€</span>
-  							<input name="montant" type="number" class="span1" min="<?=$min_reload/100?>" max="<?=$max_reload/100?>" value="<?=$reload_value?>" step="0.01" />
+  							<input name="montant" type="number" class="span1" min="<?php echo $min_reload/100?>" max="<?php echo $max_reload/100?>" value="<?php echo $reload_value?>" step="0.01" />
   							<button type="submit" class="btn btn-primary"><i class="icon-shopping-cart icon-white"></i> Recharger</button></p>
   					 </div>
             </form>
@@ -193,16 +193,16 @@ if(isset($_GET["unblock"]))
               </div>
             <?php } ?> 
             <br />
-            <h2>Etat du compte <?=affichage_blocage($MADMIN)?></h2>
+            <h2>Etat du compte <?php echo affichage_blocage($MADMIN)?></h2>
             <div class="well">
               En cas de perte ou vol de ton badge.<br />
               Tu peux ici, bloquer/débloquer la possibilité de payer avec ta carte.<br />
-              <?=button_blocage($MADMIN)?><br />
+              <?php echo button_blocage($MADMIN)?><br />
             </div>
        </div>
         <div class="span4">
           <h2>Virement à un ami</h2>
-          <?=virement($MADMIN)?>
+          <?php echo virement($MADMIN)?>
         </div>
       </div>
 
@@ -219,7 +219,7 @@ if(isset($_GET["unblock"]))
             init();
             selectPage(1);
     </script>
-    <?=virement_js()?>
+    <?php echo virement_js()?>
     </script> 
   </body>
 </html>
