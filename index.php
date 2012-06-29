@@ -200,7 +200,7 @@ if(isset($_GET["unblock"]))
               <?php echo button_blocage($MADMIN)?><br />
             </div>
             <h2>Virement à un ami</h2>
-            <?php echo $virement($MADMIN); ?>
+            <?php echo virement($MADMIN); ?>
        </div>
       </div>
 
