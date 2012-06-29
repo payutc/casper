@@ -45,7 +45,7 @@ if(isset($_GET["unblock"]))
         var historique;
         var rows;
         var rowCount = 0;
-        var pageSize = 10;
+        var pageSize = 15;
         var pageIndex = 0;
         var pages = 0;
         
@@ -158,11 +158,11 @@ if(isset($_GET["unblock"]))
         <p>Ton solde payutc est de : <strong><? echo format_amount($MADMIN->getCredit()); ?> €</strong></p>
       </div>
       <div class="row">
-        <div class="span4" >
+        <div class="span7" >
           <h2>Historique</h2>
            <div><?php echo affichage_histo($MADMIN); ?></div>
         </div>
-        <div class="span4">
+        <div class="span5">
           <h2>Rechargement</h2>
           <?php
             $max_reload = $MADMIN->getMaxReload();
@@ -199,11 +199,9 @@ if(isset($_GET["unblock"]))
               Tu peux ici, bloquer/débloquer la possibilité de payer avec ta carte.<br />
               <?=button_blocage($MADMIN)?><br />
             </div>
+            <h2>Virement à un ami</h2>
+            <?=virement($MADMIN)?>
        </div>
-        <div class="span4">
-          <h2>Virement à un ami</h2>
-          <?=virement($MADMIN)?>
-        </div>
       </div>
 
       <hr>
