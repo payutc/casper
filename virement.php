@@ -34,13 +34,13 @@ if(isset($_GET["vir"]))
 
 
 function virement($Class) {
-	global $_SERVER;
+	global $_SERVER, $CONF;
 	global $virement_msg;
 	$min_reload=0;
 	$max_reload=$Class->getCredit()/100;
 
 	return '
-	<form action="'.$_SERVER['PHP_SELF'].'?virement" method="post" class="well form-inline">
+	<form action="'.$CONF['casper_url'].'?virement" method="post" class="well form-inline">
 		'.$virement_msg.'
 		<p><h6>Trouver un utilisateur : </h6><br />
 			<input size="30" id="userName" name="userName" onkeyup="lookup(this.value);" type="text" autocomplete="off"/>
@@ -59,6 +59,7 @@ function virement($Class) {
 }
 
 function virement_js() {
+	global $CONF;
 return "
 <script type=\"text/javascript\">
             function lookup(inputString) {
@@ -66,7 +67,7 @@ return "
                     // Hide the suggestion box.
                     $('#suggestions').hide();
                 } else {
-                  $.get('/casper/?ajax', 'search='+inputString, function(data) {
+                  $.get('".$CONF['casper_url']."?ajax', 'search='+inputString, function(data) {
                         if(data.length >0) {
                             $('#suggestions').show();
                             $('#autoSuggestionsList').html(data);
