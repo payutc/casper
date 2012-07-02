@@ -34,6 +34,11 @@ if(isset($_SESSION["loged"]) && $_SESSION["loged"] == 1) {
 					if(isset($result["error_msg"]))
 						echo $result["error_msg"];
 					exit();
+				} else {
+					$_SESSION['registered'] = True;
+					// Pas obligatoire mais c'est mieux pour virer le ?register de la barre d'adresse
+					header("Location: ".$CONF['casper_url']);
+		  			exit();
 				}
 			} else {
 				include 'register.php';
