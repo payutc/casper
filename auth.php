@@ -23,6 +23,23 @@ if(isset($_SESSION["loged"]) && $_SESSION["loged"] == 1) {
 				header("Location: ".$MADMIN->getCasUrl()."/login?service=".$CONF['casper_url']);
 				exit();
 		}
+
+		if(!$_SESSION['registered'])
+		{
+			if(isset($_GET["register"]))
+			{
+				$result = $MADMIN->register();
+				if(!isset($result["success"]))
+				{
+					if(isset($result["error_msg"]))
+						echo $result["error_msg"];
+					exit();
+				}
+			} else {
+				include 'register.php';
+				exit();
+			}
+		}
 		
 	} else {
 		// On délogue par sécurité
@@ -38,19 +55,39 @@ if(isset($_SESSION["loged"]) && $_SESSION["loged"] == 1) {
 		// Connexion soap
 		$ticket = $_GET["ticket"];
 		try {
-			$code = $MADMIN->loginCas($ticket, $CONF['casper_url']);
+			$result = $MADMIN->loginCas($ticket, $CONF['casper_url']);
 		} catch (Exception $e) {
 				echo "<pre>".$e."</pre>";
 		}
+
+		if(isset($result["success"]))
+			$code = 1;
+		else if(isset($result["error"]))
+			$code = $result["error"];
+
+		// SI CONNEXION REUSSI
 		if($code == 1)
 		{
+			$_SESSION['registered'] = True;
+			$_SESSION['cookies'] = $MADMIN->_cookies;
+			$_SESSION['loged'] = 1;
+			// Pas obligatoire mais c'est mieux pour virer le ticket de la barre d'adresse
+			header("Location: ".$CONF['casper_url']);
+		  	exit();
+		// SI NON INSCRIT => PROCEDURE DE CREATION DE COMPTE
+		} else if($code == 405) {
+			$_SESSION['registered'] = False;
+
 			$_SESSION['cookies'] = $MADMIN->_cookies;
 			$_SESSION['loged'] = 1;
 			// Pas obligatoire mais c'est mieux pour virer le ticket de la barre d'adresse
 			header("Location: ".$CONF['casper_url']);
 		  	exit();
 		} else {
-			echo $MADMIN->getErrorDetail($code);
+			if(isset($result["error_msg"]))
+				echo $result["error_msg"];
+			else
+				echo $MADMIN->getErrorDetail($code);
 			exit();
 		}
 	} else {
