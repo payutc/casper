@@ -46,15 +46,13 @@
         <div class="span11 well">
           <h1>Première connexion à payutc</h1>
           <p>
-            Cette charte qui n'est pas encore rédigé vise à indiquer à l'utilisateur :
+            Cette charte qui n'est pas encore rédigée vise à indiquer à l'utilisateur les conditions d'utilisation du service et notamment :
             <ul>
               <li>La durée de conservation de ces données personnelles</li>
-              <li>Dont le temps de conservation de son solde d'argent après son départ de l'utc.</li>
-              <li>Ce que devient l'argent restant (genre va dans un fond de subvention pour les assos par exemple).</li>
-              <li>etc.....</li>
+              <li>Le temps de conservation de son solde d'argent après son départ de l'UTC</li>
             </ul>
           </p>
-          Je déclare avoir lu et compris les termes de cette charte et je m’engage à les respecter.<br />    
+          Je déclare avoir lu et compris les termes de cette charte et je m'engage à les respecter.<br />    
           <a class="btn btn-primary btn-large pull-right" href="?register">J'accepte les conditions générales d'utilisation de payutc</a> 
         </div>
       </div>
