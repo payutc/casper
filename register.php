@@ -34,6 +34,9 @@
             <span class="icon-bar"></span>
           </a>
           <a class="brand" href="#"><?php echo $CONF["title"]?></a>
+          <div class="nav-collapse">
+            <p class="navbar-text pull-right"><a href="?logout">déconnexion</a></p>
+          </div>
         </div>
       </div>
     </div>
