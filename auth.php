@@ -1,5 +1,10 @@
 <?php
 
+// Permet à plusieurs instances de casper de tourner sur le même hôte
+// (et aussi de ne pas se faire piquer des cookies)
+$sessionPath = parse_url($CONF['casper_url'], PHP_URL_PATH);
+session_set_cookie_params(0, $sessionPath);
+
 session_start();
 
 if(isset($_GET["logout"]))
