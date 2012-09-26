@@ -69,7 +69,8 @@ return "
                 } else {
                   $.get('".$CONF['casper_url']."?ajax', 'search='+inputString, function(data) {
                         if(data.length >0) {
-                            $('#suggestions').show();
+                            if ( $(\"#userName\").is(\":focus\") ) 
+                            	$('#suggestions').show();
                             $('#autoSuggestionsList').html(data);
                         }
                   });
