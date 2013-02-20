@@ -13,7 +13,9 @@ if(isset($_GET["reload"]))
 			echo $MADMIN->reload($amount, $CONF['casper_url']);
 			exit();
 		} else {
-			$error_reload = $MADMIN->getErrorDetail($can);
+			$details_erreur = str_getcsv(substr($MADMIN->getErrorDetail($can), 0, -2));
+			$error_reload = "<p>Erreur n°".$details_erreur[0]." : <b>".$details_erreur[1]."</b></p>";
+			$error_reload .= "<p>".$details_erreur[2]."</p>";
 		}
 	}
 }
