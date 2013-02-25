@@ -22,8 +22,12 @@ if(isset($_GET["vir"]))
 	$code = $_GET["vir"];
 	$montant = $_GET["amount"]/100;
 	if($code != 1) {
+		$details_erreur = str_getcsv(substr($MADMIN->getErrorDetail($code), 0, -2));
+		$erreur = "<p>Erreur n°".$details_erreur[0]." : <b>".$details_erreur[1]."</b></p>";
+		$erreur .= "<p>".$details_erreur[2]."</p>";
+		
 		$virement_msg = '<div class="alert alert-error">
-							'.$MADMIN->getErrorDetail($code).'
+							'.$erreur.'
 						</div>';
 	} else {
 		$virement_msg = '<div class="alert alert-success">
