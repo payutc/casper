@@ -1,223 +1,113 @@
 <?php
+// Slim
+require 'vendor/autoload.php';
+
+// Config et fonctions utiles
 require "config.php";
-require "madmin.php";
-require "auth.php";
-require "reload.php";
-require "virement.php";
 
-$userName = $MADMIN->getFirstname()." ".$MADMIN->getLastname();
+$MADMIN = new SoapClient($CONF['soap_url']);
 
-if(isset($_GET["block"]))
-{
-  $MADMIN->blockMe();
-}
+require "inc/functions.php";
+require "inc/auth.php";
 
-if(isset($_GET["unblock"]))
-{
-  $MADMIN->deblock();
-}
+// split auth en middleware
 
-?>
-<!DOCTYPE html>
-<html lang="fr">
-  <head>
-    <meta charset="utf-8">
-    <title><?php echo $CONF["title"]?></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+$app = new \Slim\Slim();
 
-    <!-- Le styles -->
-    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <style type="text/css">
-      body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-      }
-    </style>
-    <link href="bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+$app->get('/', function() use($app, $CONF, $MADMIN) {
+    /*if(isset($_GET["paybox"])) {
+    	if(isset($_GET["trans"])) {
+    		if($_GET['paybox'] == 'erreur') {
+    			header("Location: ".$CONF['casper_url']."?paybox=".$_GET["paybox"]."&NUMERR=".$_GET['NUMERR']);
+    			exit();
+    		} else {
+    			header("Location: ".$CONF['casper_url']."?paybox=".$_GET["paybox"]);
+    			exit();
+    		}
+    	}
+	
+    	if($_GET['paybox'] == 'erreur') { 
+    		$num_err=$_GET['NUMERR'];
+    		$error_reload = "<p>Erreur PAYBOX n°$num_err</p>";
+    	} else if($_GET['paybox'] == 'annule') { // On a une annulation
+    		$error_reload = "<p>Vous avez annulé le rechargement.</p>";	
+    	} else if($_GET['paybox'] == 'refuse') { // la transaction a ete refuse
+    		$error_reload = "<p>Transaction refusée</p>";
+    	} else if($_GET['paybox'] == 'effectue') { // a priori ça a l'air bon
+    		$success_reload = "<p>Votre compte à été rechargé.</p>";
+    	}
+    }*/
+    
+    $app->render('header.php', array("CONF" => $CONF));
+    $app->render('main.php', array(
+        "CONF" => $CONF,
+        "userDetails" => $MADMIN->getUserDetails(),
+        "max_reload" => $MADMIN->getMaxReload(),
+        "min_reload" => $MADMIN->getMinReload(),
+        "histo" => get_histo($MADMIN),
+        "isBlocked" => $MADMIN->isBlocked(),
+        "default_reload_value" => 10.00
+    ));
+    $app->render('footer.php', array("CONF" => $CONF));
+})->name('home');
 
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+$app->get('/block', function() use ($app, $MADMIN) {
+    $MADMIN->blockMe();
+    $app->response()->redirect($app->urlFor('home'));
+});
 
-    <!-- pagination de l'historique -->
-    <script type="text/javascript">
-        var historique;
-        var rows;
-        var rowCount = 0;
-        var pageSize = 15;
-        var pageIndex = 0;
-        var pages = 0;
+$app->get('/unblock', function() use ($app, $MADMIN) {
+    $MADMIN->deblock();
+    $app->response()->redirect($app->urlFor('home'));
+});
+
+$app->get('/ajax', function() use ($MADMIN) {
+    echo $MADMIN->getRpcUser($_GET["search"]);
+});
+
+$app->get('/logout', function() use ($MADMIN, $CONF) {
+    session_destroy();
+    header("Location: ".$MADMIN->getCasUrl()."/logout?url=".$CONF['casper_url']);
+});
+
+$app->post('/reload', function() use ($app, $MADMIN, $CONF) {
+	if(empty($_POST["montant"])) {
+        $app->flash('error_reload', "Saisissez un montant");
+        $app->response()->redirect($app->urlFor('home'));
+    }
+
+    $amount = parse_user_amount($_POST['montant']);
         
-        function init(){
-          historique = document.getElementById("historique");
-          rows = historique.getElementsByTagName("tr");
-          rowCount = rows.length;
-          pages = Math.ceil(rowCount / pageSize);
-          
-          if(pages<=10)
-          {
-            for ( var i=1; i <= pages; i++){
-                    var paging = document.getElementById("paging");
-                    paging.innerHTML += "<li><a onclick='selectPage(" + i + ");'>" + i + "</a></li>";
-            }
-          } /* else {
-            // Il faut mettre des boutons suivants précédents...
-            // La fonction est placé dans selectPage car on regénére le menu à chaque selection de pages...
-          }*/
-        }
+	$can = $MADMIN->canReload($amount);
+	if($can == 1) {
+		// On peut recharger
+		echo $MADMIN->reload($amount, $CONF['casper_url']);
+		$app->stop();
+	} else {
+		$erreur = str_getcsv(substr($MADMIN->getErrorDetail($can), 0, -2));
+        $app->flash('reload_erreur', '<p>Erreur n°'.$erreur[0].' : <b>'.$erreur[1].'</b></p><p>'.$erreur[2].'</p>');
+        $app->flash('reload_value', $amount/100);
         
-        function selectPage(pageIndex){
-          var current = (pageSize * (pageIndex - 1));
-          var next = (current + pageSize < rowCount) ? current + pageSize : rowCount;
-          var paging = document.getElementById("paging");
+        $app->response()->redirect($app->urlFor('home'));
+	}
+});
 
-          if(pages<=10)
-          {
-            var button = paging.getElementsByTagName("li");
-            for(var i=0; i<pages; i++)
-              button[i].className="";
-            button[pageIndex-1].className="active";
-          } else {
-            posCurrent = 3;
-            if(pageIndex<3)
-              posCurrent = pageIndex;
-            start = (pageIndex - 3 < 0) ? 0 : pageIndex - 3;
-            if(start + 5 < pages) {
-              end = start + 6;
-            } else {
-              start = pages - 5;
-              end = pages + 1;
-              posCurrent = 5 - (pages - pageIndex); 
-            }
-            if(start == 0)
-              paging.innerHTML = "<li><a>" + "<<" + "</a></li>";
-            else
-              paging.innerHTML = "<li><a onclick='selectPage(" + start + ");'>" + "<<" + "</a></li>";
+$app->post('/virement', function() use ($app, $MADMIN, $CONF) {
+    $montant = parse_user_amount($_POST['montant']);
+    
+	$code = $MADMIN->transfert($montant, $_POST["userId"]);
 
-            for ( var i=start+1; i < end; i++){
-              var paging = document.getElementById("paging");
-              paging.innerHTML += "<li><a onclick='selectPage(" + i + ");'>" + i + "</a></li>";
-            }
+    // Si le virement a échoué
+    if($code != 1){
+        $erreur = str_getcsv(substr($MADMIN->getErrorDetail($code), 0, -2));
+        $app->flash('virement_erreur', '<p>Erreur n°'.$erreur[0].' : <b>'.$erreur[1].'</b></p><p>'.$erreur[2].'</p>');
+        $app->flash('virement_value', $montant/100);
+	}
+    else {
+        $app->flash('virement_ok', 'Le virement de '.format_number($montant).' € à réussi.');
+    }
+    
+    $app->response()->redirect($app->urlFor('home'));
+});
 
-            if(end>pages)
-              paging.innerHTML += "<li><a>" + ">>" + "</a></li>";
-            else
-              paging.innerHTML += "<li><a onclick='selectPage(" + end + ");'>" + ">>" + "</a></li>";
-
-            var button = paging.getElementsByTagName("li");
-            for(var i=0; i<6; i++)
-              button[i].className="";
-            button[posCurrent].className="active";
-            if(start==0)
-              button[0].className="disabled";
-            if(end>pages)
-              button[6].className="disabled";
-          }
-
-          for (var idx =0; idx < current; idx++){
-                  rows[idx].style.display ='none';
-          }
-          
-          for (var idx = current; idx < next; idx++){
-                  rows[idx].style.display = 'table-row';
-          }
-          
-          
-          for (var idx = next; idx < rowCount; idx++){
-                  rows[idx].style.display ='none';
-          }
-        }
-    </script>
-
-  </head>
-
-  <body>
-
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a class="brand" href="#"><?php echo $CONF["title"]?></a>
-          <div class="nav-collapse">
-            <p class="navbar-text pull-right"><a href="?logout">déconnexion</a></p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="container">
-
-      <div class="hero-unit">
-        <h1>Bonjour, <?php echo $userName?> !</h1>
-	<br />
-        <p>Ton solde payutc est de : <strong><?php echo format_amount($MADMIN->getCredit()); ?> €</strong></p>
-      </div>
-      <div class="row">
-        <div class="span7" >
-          <h2>Historique</h2>
-           <div><?php echo affichage_histo($MADMIN); ?></div>
-        </div>
-        <div class="span5">
-          <h2>Rechargement</h2>
-          <?php
-            $max_reload = $MADMIN->getMaxReload();
-            $min_reload = $MADMIN->getMinReload();
-            if($max_reload != 0) { 
-  						if(isset($error_reload)) { ?>
-            <div class="alert alert-error">
-  						<?php echo $error_reload?>
-  					</div>
-  					<?php } ?>
-  					<?php
-  						if(isset($success_reload)) { ?>
-            <div class="alert alert-success">
-  						<?php echo $success_reload?>
-  					</div>
-  					<?php } ?>
-  					<form action="<?php echo $_SERVER['PHP_SELF']?>?reload" method="post" class="well form-inline">
-             <p><h6>Montant du rechargement : </h6><br />
-             <div class="input-prepend input-append">
-  						 	<span class="add-on">€</span>
-  							<input name="montant" type="number" class="span1" min="<?php echo $min_reload/100?>" max="<?php echo $max_reload/100?>" value="<?php echo $reload_value?>" step="0.01" />
-  							<button type="submit" class="btn btn-primary"><i class="icon-shopping-cart icon-white"></i> Recharger</button></p>
-  					 </div>
-            </form>
-            <?php } else { ?>
-              <div class="alert alert-success">
-                Ton compte ne peut être rechargé sans dépasser le plafond maximum.
-              </div>
-            <?php } ?> 
-            <br />
-            <h2>Etat du compte <?php echo affichage_blocage($MADMIN)?></h2>
-            <div class="well">
-              En cas de perte ou vol de ton badge.<br />
-              Tu peux ici, bloquer/débloquer la possibilité de payer avec ta carte.<br />
-              <?php echo button_blocage($MADMIN)?><br />
-            </div>
-            <h2>Virement à un ami</h2>
-            <?php echo virement($MADMIN); ?>
-       </div>
-      </div>
-
-      <hr>
-
-      <footer>
-        <p>&copy; payutc 2012</p>
-      </footer>
-
-    </div> <!-- /container -->
-    <script src="js/jquery-1.7.2.min.js"></script>
-    <script src="js/bootstrap.js"></script>
-    <script type="text/javascript">
-            init();
-            selectPage(1);
-    </script>
-    <?php echo virement_js()?>
-    </script> 
-  </body>
-</html>
+$app->run();
