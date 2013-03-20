@@ -4,7 +4,7 @@ require 'vendor/autoload.php';
 
 // Config et fonctions utiles
 require "config.php";
-
+require "SoapCookies.php";
 $MADMIN = new SoapClient($CONF['soap_url']);
 
 require "inc/functions.php";
@@ -17,8 +17,9 @@ session_set_cookie_params(0, $sessionPath);
 session_start();
 
 $app = new \Slim\Slim();
+$app->add(new \Payutc\SoapCookies);
 
-$app->get('/', 'auth', function() use($app, $CONF, $MADMIN) {
+$app->get('/', 'userLoggedIn', function() use($app, $CONF, $MADMIN) {
     $app->render('header.php', array(
         "title" => $CONF["title"]
     ));
@@ -33,22 +34,22 @@ $app->get('/', 'auth', function() use($app, $CONF, $MADMIN) {
     $app->render('footer.php');
 })->name('home');
 
-$app->get('/block', 'auth', function() use ($app, $MADMIN) {
+$app->get('/block', 'userLoggedIn', function() use ($app, $MADMIN) {
     $MADMIN->blockMe();
     $app->response()->redirect($app->urlFor('home'));
 });
 
-$app->get('/unblock', 'auth', function() use ($app, $MADMIN) {
+$app->get('/unblock', 'userLoggedIn', function() use ($app, $MADMIN) {
     $MADMIN->deblock();
     $app->response()->redirect($app->urlFor('home'));
 });
 
-$app->get('/ajax', 'auth', function() use ($MADMIN) {
+$app->get('/ajax', 'userLoggedIn', function() use ($MADMIN) {
     echo $MADMIN->getRpcUser($_GET["search"]);
 });
 
-$app->post('/reload', 'auth', function() use ($app, $MADMIN, $CONF) {
-	if(empty($_POST["montant"])) {
+$app->post('/reload', 'userLoggedIn', function() use ($app, $MADMIN, $CONF) {
+    if(empty($_POST["montant"])) {
         $app->flash('error_reload', "Saisissez un montant");
         $app->response()->redirect($app->urlFor('home'));
     }
@@ -69,7 +70,7 @@ $app->post('/reload', 'auth', function() use ($app, $MADMIN, $CONF) {
 	}
 });
 
-$app->post('/virement', 'auth', function() use ($app, $MADMIN, $CONF) {
+$app->post('/virement', 'userLoggedIn', function() use ($app, $MADMIN, $CONF) {
     $montant = parse_user_amount($_POST['montant']);
     
 	$code = $MADMIN->transfert($montant, $_POST["userId"]);
@@ -87,7 +88,7 @@ $app->post('/virement', 'auth', function() use ($app, $MADMIN, $CONF) {
     $app->response()->redirect($app->urlFor('home'));
 });
 
-$app->get('/postreload', 'auth', function() use ($app) {
+$app->get('/postreload', 'userLoggedIn', function() use ($app) {
     switch($_GET['paybox']) {
         case 'erreur':
             $app->flash('reload_erreur', 'Erreur Paybox n°'.$_GET['NUMERR']);
