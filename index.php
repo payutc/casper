@@ -56,31 +56,31 @@ $app->post('/reload', 'userLoggedIn', function() use ($app, $MADMIN, $CONF) {
 
     $amount = parse_user_amount($_POST['montant']);
         
-	$can = $MADMIN->canReload($amount);
-	if($can == 1) {
-		// On peut recharger
-		echo $MADMIN->reload($amount, $CONF['casper_url'].'postreload');
-		$app->stop();
-	} else {
-		$erreur = str_getcsv(substr($MADMIN->getErrorDetail($can), 0, -2));
+    $can = $MADMIN->canReload($amount);
+    if($can == 1) {
+        // On peut recharger
+        echo $MADMIN->reload($amount, $CONF['casper_url'].'postreload');
+        $app->stop();
+    } else {
+        $erreur = str_getcsv(substr($MADMIN->getErrorDetail($can), 0, -2));
         $app->flash('reload_erreur', '<p>Erreur n°'.$erreur[0].' : <b>'.$erreur[1].'</b></p><p>'.$erreur[2].'</p>');
         $app->flash('reload_value', $amount/100);
         
         $app->response()->redirect($app->urlFor('home'));
-	}
+    }
 });
 
 $app->post('/virement', 'userLoggedIn', function() use ($app, $MADMIN, $CONF) {
     $montant = parse_user_amount($_POST['montant']);
     
-	$code = $MADMIN->transfert($montant, $_POST["userId"]);
+    $code = $MADMIN->transfert($montant, $_POST["userId"]);
 
     // Si le virement a échoué
     if($code != 1){
         $erreur = str_getcsv(substr($MADMIN->getErrorDetail($code), 0, -2));
         $app->flash('virement_erreur', '<p>Erreur n°'.$erreur[0].' : <b>'.$erreur[1].'</b></p><p>'.$erreur[2].'</p>');
         $app->flash('virement_value', $montant/100);
-	}
+    }
     else {
         $app->flash('virement_ok', 'Le virement de '.format_number($montant).' € à réussi.');
     }
