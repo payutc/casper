@@ -129,30 +129,47 @@ $app->post('/register', function() use ($app, $MADMIN) {
     }
 });
 
+// --- CAS
 $app->get('/login', function() use ($app, $CONF, $MADMIN) {
     // Si pas de ticket, c'est une invitation à se connecter
     if(empty($_GET["ticket"])) {
+        // On jette les cookies actuels
         unset($_SESSION['cookies']);
+        
+        // Redirection vers le CAS
         $app->redirect($MADMIN->getCasUrl()."/login?service=".$CONF['casper_url'].'login');
     } else {
-        // Connexion avec le ticket
+        // Connexion au serveur avec le ticket
         $result = $MADMIN->loginCas($_GET["ticket"], $CONF['casper_url'].'login');
 
         if(isset($result["success"])) {
+            // On stocke les cookies (SoapCookies les rechargera après)
             $_SESSION['cookies'] = $MADMIN->_cookies;
+            
+            // Go vers la page d'accueil
             $app->redirect($app->urlFor('home'));
         } else if(isset($result["error"])) {
             // Si non inscrit, création de compte
             if($result["error"] == 405) {
+                // On doit garder les cookies car le serveur garde le login de son côté
                 $_SESSION['cookies'] = $MADMIN->_cookies;
+                
+                // Redirection vers la charte
                 $app->redirect($app->urlFor('register'));
             } else {
                 if(isset($result["error_msg"])) {
-                    echo $result["error_msg"];
+                    // Si on a un message, on l'affiche
+                    $login_erreur = $result["error_msg"];
                 } else {
-                    echo $MADMIN->getErrorDetail($result["error"]);
+                    // Sinon, on essaie de récupérer le message correspondant à ce code d'erreur
+                    $erreur = str_getcsv(substr($MADMIN->getErrorDetail($result["error"]), 0, -2));
+                    $login_erreur = '<p>Erreur n°'.$erreur[0].' : <b>'.$erreur[1].'</b></p><p>'.$erreur[2].'</p>';
                 }
-                $app->stop();
+                
+                // Affichage d'une page avec juste l'erreur
+                $app->render('header.php', array("title" => $CONF["title"]));                
+                $app->render('error.php', array('login_erreur' => $login_erreur));
+                $app->render('footer.php');
             }
         }        
     }
