@@ -110,4 +110,34 @@ $app->get('/postreload', function() use ($app) {
     }
 });
 
+$app->get('/login', function() use ($app, $CONF, $MADMIN) {
+    // Si pas de ticket, c'est une invitation à se connecter
+    if(empty($_GET["ticket"])) {
+        session_destroy();
+        $app->redirect($MADMIN->getCasUrl()."/login?service=".$CONF['casper_url'].'login');
+    } else {
+        // Connexion avec le ticket
+        $result = $MADMIN->loginCas($_GET["ticket"], $CONF['casper_url'].'login');
+
+        if(isset($result["success"])) {
+            $_SESSION['cookies'] = $MADMIN->_cookies;
+            $app->redirect($app->urlFor('home'));
+        } else if(isset($result["error"])) {
+            // Si non inscrit, création de compte
+            if($result["error"] == 405) {
+                $_SESSION['cookies'] = $MADMIN->_cookies;
+                $app->redirect($app->urlFor('register'));
+            } else {
+                if(isset($result["error_msg"])) {
+                    echo $result["error_msg"];
+                } else {
+                    echo $MADMIN->getErrorDetail($result["error"]);
+                }
+                $app->stop();
+            }
+        }        
+    }
+})->name('login');
+
+
 $app->run();

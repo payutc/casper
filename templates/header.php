@@ -122,9 +122,9 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="#"><?php echo $title ?></a>
+          <span class="brand"><?php echo $title ?></span>
           <div class="nav-collapse">
-            <p class="navbar-text pull-right"><a href="logout">déconnexion</a></p>
+            <p class="navbar-text pull-right"><a href="login">déconnexion</a></p>
           </div>
         </div>
       </div>
