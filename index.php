@@ -4,21 +4,26 @@ require 'vendor/autoload.php';
 
 // Config et fonctions utiles
 require "config.php";
-require "SoapCookies.php";
-$MADMIN = new SoapClient($CONF['soap_url']);
-
 require "inc/functions.php";
+require "inc/SoapCookies.php";
 
-// Permet à plusieurs instances de casper de tourner sur le même hôte
-// (et aussi de ne pas se faire piquer des cookies)
+// Restriction des cookies au chemin de casper et démarrage de la session
 $sessionPath = parse_url($CONF['casper_url'], PHP_URL_PATH);
 session_set_cookie_params(0, $sessionPath);
-
 session_start();
 
+// Connexion SOAP
+$MADMIN = new SoapClient($CONF['soap_url']);
+
+// Lancement de Slim
 $app = new \Slim\Slim();
+
+// Ce Middleware fait persister les cookies du SOAP
 $app->add(new \Payutc\SoapCookies);
 
+// --- Coeur de casper
+
+// Page principale
 $app->get('/', 'userLoggedIn', function() use($app, $CONF, $MADMIN) {
     $app->render('header.php', array(
         "title" => $CONF["title"]
@@ -34,11 +39,13 @@ $app->get('/', 'userLoggedIn', function() use($app, $CONF, $MADMIN) {
     $app->render('footer.php');
 })->name('home');
 
+// Blocage du compte
 $app->get('/block', 'userLoggedIn', function() use ($app, $MADMIN) {
     $MADMIN->blockMe();
     $app->response()->redirect($app->urlFor('home'));
 });
 
+// Déblocage du compte
 $app->get('/unblock', 'userLoggedIn', function() use ($app, $MADMIN) {
     $MADMIN->deblock();
     $app->response()->redirect($app->urlFor('home'));
@@ -48,6 +55,7 @@ $app->get('/ajax', 'userLoggedIn', function() use ($MADMIN) {
     echo $MADMIN->getRpcUser($_GET["search"]);
 });
 
+// Départ vers le rechargement
 $app->post('/reload', 'userLoggedIn', function() use ($app, $MADMIN, $CONF) {
     if(empty($_POST["montant"])) {
         $app->flash('error_reload', "Saisissez un montant");
@@ -70,25 +78,9 @@ $app->post('/reload', 'userLoggedIn', function() use ($app, $MADMIN, $CONF) {
     }
 });
 
-$app->post('/virement', 'userLoggedIn', function() use ($app, $MADMIN, $CONF) {
-    $montant = parse_user_amount($_POST['montant']);
-    
-    $code = $MADMIN->transfert($montant, $_POST["userId"]);
-
-    // Si le virement a échoué
-    if($code != 1){
-        $erreur = str_getcsv(substr($MADMIN->getErrorDetail($code), 0, -2));
-        $app->flash('virement_erreur', '<p>Erreur n°'.$erreur[0].' : <b>'.$erreur[1].'</b></p><p>'.$erreur[2].'</p>');
-        $app->flash('virement_value', $montant/100);
-    }
-    else {
-        $app->flash('virement_ok', 'Le virement de '.format_number($montant).' € à réussi.');
-    }
-    
-    $app->response()->redirect($app->urlFor('home'));
-});
-
+// Retour du rechargement
 $app->get('/postreload', 'userLoggedIn', function() use ($app) {
+    // Génération du message à afficher
     switch($_GET['paybox']) {
         case 'erreur':
             $app->flash('reload_erreur', 'Erreur Paybox n°'.$_GET['NUMERR']);
@@ -103,28 +95,62 @@ $app->get('/postreload', 'userLoggedIn', function() use ($app) {
             $app->flash('reload_ok', 'Votre compte à été rechargé.');
         break;
     }
+    
+    // Retour vers la page d'accueil
+    $app->redirect($app->urlFor('home'));
 });
 
+// Virement à un ami
+$app->post('/virement', 'userLoggedIn', function() use ($app, $MADMIN, $CONF) {
+    // Récupèration du montant en cents
+    $montant = parse_user_amount($_POST['montant']);
+    
+    // Appel serveur
+    $code = $MADMIN->transfert($montant, $_POST["userId"]);
+
+    // Si le virement a échoué
+    if($code != 1){
+        $erreur = str_getcsv(substr($MADMIN->getErrorDetail($code), 0, -2));
+        $app->flash('virement_erreur', '<p>Erreur n°'.$erreur[0].' : <b>'.$erreur[1].'</b></p><p>'.$erreur[2].'</p>');
+        $app->flash('virement_value', $montant/100);
+    } else {
+        $app->flash('virement_ok', 'Le virement de '.format_number($montant).' € à réussi.');
+    }
+    
+    // Retour vers la page d'accueil
+    $app->response()->redirect($app->urlFor('home'));
+});
+
+// --- Enregistrement
+
+// Affichage de la charte
 $app->get('/register', function() use ($app, $CONF) {
     $app->render('header.php', array(
         "title" => $CONF["title"]
     ));
-    $app->render('register.php', array(
-    ));
-    $app->render('footer.php', array("CONF" => $CONF));
+
+    $app->render('register.php');
+
+    $app->render('footer.php');
 })->name('register');
 
+// Enregistrement après validation de la charte
 $app->post('/register', function() use ($app, $MADMIN) {
+    // Appel serveur
     $result = $MADMIN->register();
     
     if(isset($result["success"])) {
+        // Si ok, go vers la page d'accueil
         $app->redirect($app->urlFor('home'));
     } else {
         if(isset($result["error_msg"])) {
+            // Si on a une erreur on l'affiche
             $app->flash('register_erreur', $result["error_msg"]);
         } else {
             $app->flash('register_erreur', "Échec de la création du compte.");
         }
+        
+        // On n'a pas réussi à s'enregistrer, retour vers la charte
         $app->redirect($app->urlFor('register'));
     }
 });
