@@ -16,7 +16,6 @@ session_set_cookie_params(0, $sessionPath);
 
 session_start();
 
-
 $app = new \Slim\Slim();
 
 $app->get('/', 'auth', function() use($app, $CONF, $MADMIN) {
@@ -34,26 +33,21 @@ $app->get('/', 'auth', function() use($app, $CONF, $MADMIN) {
     $app->render('footer.php');
 })->name('home');
 
-$app->get('/block', function() use ($app, $MADMIN) {
+$app->get('/block', 'auth', function() use ($app, $MADMIN) {
     $MADMIN->blockMe();
     $app->response()->redirect($app->urlFor('home'));
 });
 
-$app->get('/unblock', function() use ($app, $MADMIN) {
+$app->get('/unblock', 'auth', function() use ($app, $MADMIN) {
     $MADMIN->deblock();
     $app->response()->redirect($app->urlFor('home'));
 });
 
-$app->get('/ajax', function() use ($MADMIN) {
+$app->get('/ajax', 'auth', function() use ($MADMIN) {
     echo $MADMIN->getRpcUser($_GET["search"]);
 });
 
-$app->get('/logout', function() use ($MADMIN, $CONF) {
-    session_destroy();
-    header("Location: ".$MADMIN->getCasUrl()."/logout?url=".$CONF['casper_url']);
-});
-
-$app->post('/reload', function() use ($app, $MADMIN, $CONF) {
+$app->post('/reload', 'auth', function() use ($app, $MADMIN, $CONF) {
 	if(empty($_POST["montant"])) {
         $app->flash('error_reload', "Saisissez un montant");
         $app->response()->redirect($app->urlFor('home'));
@@ -75,7 +69,7 @@ $app->post('/reload', function() use ($app, $MADMIN, $CONF) {
 	}
 });
 
-$app->post('/virement', function() use ($app, $MADMIN, $CONF) {
+$app->post('/virement', 'auth', function() use ($app, $MADMIN, $CONF) {
     $montant = parse_user_amount($_POST['montant']);
     
 	$code = $MADMIN->transfert($montant, $_POST["userId"]);
@@ -93,7 +87,7 @@ $app->post('/virement', function() use ($app, $MADMIN, $CONF) {
     $app->response()->redirect($app->urlFor('home'));
 });
 
-$app->get('/postreload', function() use ($app) {
+$app->get('/postreload', 'auth', function() use ($app) {
     switch($_GET['paybox']) {
         case 'erreur':
             $app->flash('reload_erreur', 'Erreur Paybox n°'.$_GET['NUMERR']);
