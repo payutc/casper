@@ -15,29 +15,6 @@ require "inc/auth.php";
 $app = new \Slim\Slim();
 
 $app->get('/', function() use($app, $CONF, $MADMIN) {
-    /*if(isset($_GET["paybox"])) {
-    	if(isset($_GET["trans"])) {
-    		if($_GET['paybox'] == 'erreur') {
-    			header("Location: ".$CONF['casper_url']."?paybox=".$_GET["paybox"]."&NUMERR=".$_GET['NUMERR']);
-    			exit();
-    		} else {
-    			header("Location: ".$CONF['casper_url']."?paybox=".$_GET["paybox"]);
-    			exit();
-    		}
-    	}
-	
-    	if($_GET['paybox'] == 'erreur') { 
-    		$num_err=$_GET['NUMERR'];
-    		$error_reload = "<p>Erreur PAYBOX n°$num_err</p>";
-    	} else if($_GET['paybox'] == 'annule') { // On a une annulation
-    		$error_reload = "<p>Vous avez annulé le rechargement.</p>";	
-    	} else if($_GET['paybox'] == 'refuse') { // la transaction a ete refuse
-    		$error_reload = "<p>Transaction refusée</p>";
-    	} else if($_GET['paybox'] == 'effectue') { // a priori ça a l'air bon
-    		$success_reload = "<p>Votre compte à été rechargé.</p>";
-    	}
-    }*/
-    
     $app->render('header.php', array("CONF" => $CONF));
     $app->render('main.php', array(
         "CONF" => $CONF,
@@ -81,7 +58,7 @@ $app->post('/reload', function() use ($app, $MADMIN, $CONF) {
 	$can = $MADMIN->canReload($amount);
 	if($can == 1) {
 		// On peut recharger
-		echo $MADMIN->reload($amount, $CONF['casper_url']);
+		echo $MADMIN->reload($amount, $CONF['casper_url'].'postreload');
 		$app->stop();
 	} else {
 		$erreur = str_getcsv(substr($MADMIN->getErrorDetail($can), 0, -2));
@@ -108,6 +85,23 @@ $app->post('/virement', function() use ($app, $MADMIN, $CONF) {
     }
     
     $app->response()->redirect($app->urlFor('home'));
+});
+
+$app->get('/postreload', function() use ($app) {
+    switch($_GET['paybox']) {
+        case 'erreur':
+            $app->flash('reload_erreur', 'Erreur Paybox n°'.$_GET['NUMERR']);
+        break;
+        case 'annule':
+            $app->flash('reload_erreur', 'Vous avez annulé le rechargement.');
+        break;
+        case 'refuse':
+            $app->flash('reload_erreur', 'La transaction a été refusée.');
+        break;
+        case 'effectue':
+            $app->flash('reload_ok', 'Votre compte à été rechargé.');
+        break;
+    }
 });
 
 $app->run();

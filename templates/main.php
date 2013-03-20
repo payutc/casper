@@ -38,8 +38,8 @@
             <?php if(isset($flash['reload_erreur'])): ?>
                 <div class="alert alert-error"><?php echo $flash['reload_erreur'] ?></div>
             <?php endif ?>
-            <?php if(isset($success_reload)): ?>
-                <div class="alert alert-success"><?php echo $success_reload?></div>
+            <?php if(isset($flash['reload_ok'])): ?>
+                <div class="alert alert-success"><?php echo $flash['reload_ok'] ?></div>
             <?php endif ?>
             <form action="reload" method="post" class="well form-inline">
                 <p>
