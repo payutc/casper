@@ -34,3 +34,26 @@ function parse_user_amount($val) {
     $amount = str_replace(',','.', $val);
     return $amount*100;
 }
+
+function auth(){
+    global $MADMIN;
+    
+    $app = \Slim\Slim::getInstance();
+    
+    // L'utilisateur est déjà connecté avec un cookie
+    if(isset($_SESSION['cookies'])) {
+        // On charge la session soap
+    	$MADMIN->_cookies = $_SESSION['cookies'];
+
+        // On récupère les infos du user
+        $userDetails = $MADMIN->getUserDetails();
+        
+        // Si le user est vide de l'autre côté, on repasse par le cas
+        var_dump($userDetails);
+        if(empty($userDetails)) {
+            $app->redirect($app->urlFor('login'));
+    	}
+    } else {
+    	$app->redirect($app->urlFor('login'));
+    }
+}

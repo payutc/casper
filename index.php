@@ -8,13 +8,18 @@ require "config.php";
 $MADMIN = new SoapClient($CONF['soap_url']);
 
 require "inc/functions.php";
-require "inc/auth.php";
 
-// split auth en middleware
+// Permet à plusieurs instances de casper de tourner sur le même hôte
+// (et aussi de ne pas se faire piquer des cookies)
+$sessionPath = parse_url($CONF['casper_url'], PHP_URL_PATH);
+session_set_cookie_params(0, $sessionPath);
+
+session_start();
+
 
 $app = new \Slim\Slim();
 
-$app->get('/', function() use($app, $CONF, $MADMIN) {
+$app->get('/', 'auth', function() use($app, $CONF, $MADMIN) {
     $app->render('header.php', array(
         "title" => $CONF["title"]
     ));
