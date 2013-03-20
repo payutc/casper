@@ -132,7 +132,7 @@ $app->post('/register', function() use ($app, $MADMIN) {
 $app->get('/login', function() use ($app, $CONF, $MADMIN) {
     // Si pas de ticket, c'est une invitation à se connecter
     if(empty($_GET["ticket"])) {
-        session_destroy();
+        unset($_SESSION['cookies']);
         $app->redirect($MADMIN->getCasUrl()."/login?service=".$CONF['casper_url'].'login');
     } else {
         // Connexion avec le ticket
