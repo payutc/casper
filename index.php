@@ -105,6 +105,30 @@ $app->get('/postreload', 'userLoggedIn', function() use ($app) {
     }
 });
 
+$app->get('/register', function() use ($app, $CONF) {
+    $app->render('header.php', array(
+        "title" => $CONF["title"]
+    ));
+    $app->render('register.php', array(
+    ));
+    $app->render('footer.php', array("CONF" => $CONF));
+})->name('register');
+
+$app->post('/register', function() use ($app, $MADMIN) {
+    $result = $MADMIN->register();
+    
+    if(isset($result["success"])) {
+        $app->redirect($app->urlFor('home'));
+    } else {
+        if(isset($result["error_msg"])) {
+            $app->flash('register_erreur', $result["error_msg"]);
+        } else {
+            $app->flash('register_erreur', "Échec de la création du compte.");
+        }
+        $app->redirect($app->urlFor('register'));
+    }
+});
+
 $app->get('/login', function() use ($app, $CONF, $MADMIN) {
     // Si pas de ticket, c'est une invitation à se connecter
     if(empty($_GET["ticket"])) {
