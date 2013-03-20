@@ -2,7 +2,7 @@
 <html lang="fr">
   <head>
     <meta charset="utf-8">
-    <title><?php echo $CONF["title"]?></title>
+    <title><?php echo $title ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Le styles -->
@@ -122,7 +122,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="#"><?php echo $CONF["title"]?></a>
+          <a class="brand" href="#"><?php echo $title ?></a>
           <div class="nav-collapse">
             <p class="navbar-text pull-right"><a href="logout">déconnexion</a></p>
           </div>

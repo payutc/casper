@@ -15,9 +15,10 @@ require "inc/auth.php";
 $app = new \Slim\Slim();
 
 $app->get('/', function() use($app, $CONF, $MADMIN) {
-    $app->render('header.php', array("CONF" => $CONF));
+    $app->render('header.php', array(
+        "title" => $CONF["title"]
+    ));
     $app->render('main.php', array(
-        "CONF" => $CONF,
         "userDetails" => $MADMIN->getUserDetails(),
         "max_reload" => $MADMIN->getMaxReload(),
         "min_reload" => $MADMIN->getMinReload(),
@@ -25,7 +26,7 @@ $app->get('/', function() use($app, $CONF, $MADMIN) {
         "isBlocked" => $MADMIN->isBlocked(),
         "default_reload_value" => 10.00
     ));
-    $app->render('footer.php', array("CONF" => $CONF));
+    $app->render('footer.php');
 })->name('home');
 
 $app->get('/block', function() use ($app, $MADMIN) {
