@@ -51,8 +51,9 @@ $app->get('/unblock', 'userLoggedIn', function() use ($app, $MADMIN) {
     $app->response()->redirect($app->urlFor('home'));
 });
 
+// Autocomplete du virement
 $app->get('/ajax', 'userLoggedIn', function() use ($MADMIN) {
-    echo $MADMIN->getRpcUser($_GET["search"]);
+    echo json_encode($MADMIN->userAutocomplete($_GET["search"]));
 });
 
 // Départ vers le rechargement

@@ -78,18 +78,15 @@
             <?php endif ?>
             <p>
                 <h6>Trouver un utilisateur</h6><br />
-                <input size="30" id="userName" name="userName" onkeyup="lookup(this.value);" type="text" autocomplete="off"/>
-                <input id="userId" name="userId" type="text" style="display: none;" />
-                <div class="suggestionsBox" id="suggestions" style="display: none;">
-                    <div class="suggestionList" id="autoSuggestionsList" style="list-style-type: none;"></div>
-                </div>
+                <input size="30" id="userName" name="userName" placeholder="Destinataire" type="text" autocomplete="off"/>
+                <input id="userId" name="userId" type="hidden" />
             </p>
             <p>
                 <h6>Montant du virement</h6><br />
-                <div class="input-prepend input-append">
-                    <span class="add-on">€</span>
+                <div class="input-append">
                     <input name="montant" type="number" class="span1" min="0" max="<?php echo $userDetails["credit"] ?>" value="<?php if(isset($virement_value)) echo $virement_value ?>" step="0.01" />
-                    <button type="submit" class="btn btn-primary"><i class="icon-shopping-cart icon-white"></i> Virer</button>
+                    <span class="add-on">€</span>
+                    <button type="submit" class="btn btn-primary"><i class="icon-arrow-right icon-white"></i> Transférer</button>
                 </div>
             </p>
                     
