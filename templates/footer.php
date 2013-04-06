@@ -12,6 +12,7 @@
     <script type="text/javascript">
             init();
             selectPage(1);
+            $("a").tooltip();
     </script>
     </script> 
   </body>

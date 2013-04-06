@@ -30,7 +30,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <span class="brand"><?php echo $title ?></span>
+          <a class="brand" href=""><?php echo $title ?></a>
           <div class="nav-collapse">
             <p class="navbar-text pull-right"><a href="login">déconnexion</a></p>
           </div>

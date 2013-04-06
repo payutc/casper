@@ -33,8 +33,7 @@ $app->get('/', 'userLoggedIn', function() use($app, $CONF, $MADMIN) {
         "max_reload" => $MADMIN->getMaxReload(),
         "min_reload" => $MADMIN->getMinReload(),
         "histo" => get_histo($MADMIN),
-        "isBlocked" => $MADMIN->isBlocked(),
-        "default_reload_value" => 10.00
+        "isBlocked" => $MADMIN->isBlocked()
     ));
     $app->render('footer.php');
 })->name('home');
