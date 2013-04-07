@@ -21,7 +21,9 @@ if(isset($_SESSION["loged"]) && $_SESSION["loged"] == 1) {
 		$MADMIN->_cookies = $_SESSION['cookies'];
 		// Verification que la session soap n'a pas expiré. 
 		try {
-				$MADMIN->getFirstname();
+				if($MADMIN->getFirstname() == "") {
+                    throw new Exception();
+				}
 		} catch (Exception $e) {
 				session_destroy();
 				// On envoie sur le cas
