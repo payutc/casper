@@ -10,7 +10,13 @@ $virement_msg = "";
 if(isset($_GET["virement"]))
 {
 	$montant = $_POST["montant"]*100;
-	$code = $MADMIN->transfert($montant, $_POST["userId"]);
+    if(isset($_POST["message"])) {
+        $msg = $_POST["message"];
+    } else {
+        $msg = "";
+    }
+
+	$code = $MADMIN->transfert($montant, $_POST["userId"], $msg);
 	sleep(1); // Gros HACK DEGEU, pour que le virement ai le temps de se faire et que l'historique puisse se charger avec le virement.
 			  // Les fonctions soap semblent asynchrone... 
 	header("Location: ".$CONF['casper_url']."?vir=$code&amount=$montant");
@@ -52,6 +58,9 @@ function virement($Class) {
 			<div class="suggestionsBox" id="suggestions" style="display: none;">
 				<div class="suggestionList" id="autoSuggestionsList" style="list-style-type: none;"></div>
 			</div>
+		</p>
+		<p><h6>Ajouter un message : </h6><br />
+			<input size="30" id="message" name="message" type="text" maxlength="50" />
 		</p>
 		<p><h6>Montant du virement : </h6><br />
 		<div class="input-prepend input-append">

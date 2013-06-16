@@ -50,9 +50,9 @@ function affichage_histo($user) {
 		} else if ($elt['type'] == "RECHARGEMENT") {
 			$return .= '<td>'.date('d/m/y H:i:s',$elt[0]).'</td><td>Rechargement</td><td><span class="label label-success"> <i class="icon-plus icon-white"></i> '.format_amount($elt[5]).' €</span></td>';
 		} else if ($elt['type'] == "VIREMENTin") {
-			$return .= '<td>'.date('d/m/y H:i:s',$elt[0]).'</td><td>Virement ('.$elt[2].' '.$elt[3].')</td><td><span class="label label-success"> <i class="icon-plus icon-white"></i> '.format_amount($elt[1]).' €</span></td>';
+			$return .= '<td>'.date('d/m/y H:i:s',$elt[0]).'</td><td>Virement ('.$elt[2].') '.$elt[3].'</td><td><span class="label label-success"> <i class="icon-plus icon-white"></i> '.format_amount($elt[1]).' €</span></td>';
 		} else if ($elt['type'] == "VIREMENTout") {
-			$return .= '<td>'.date('d/m/y H:i:s',$elt[0]).'</td><td>Virement ('.$elt[2].' '.$elt[3].')</td><td><span class="label label-important"> <i class="icon-minus icon-white"></i> '.format_amount($elt[1]).' €</span></td>';
+			$return .= '<td>'.date('d/m/y H:i:s',$elt[0]).'</td><td>Virement ('.$elt[2].') '.$elt[3].'</td><td><span class="label label-important"> <i class="icon-minus icon-white"></i> '.format_amount($elt[1]).' €</span></td>';
 		}
 		$return .= "</tr>";
 	}
