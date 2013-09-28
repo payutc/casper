@@ -76,6 +76,8 @@ if(isset($_SESSION["loged"]) && $_SESSION["loged"] == 1) {
 			$code = 1;
 		else if(isset($result["error"]))
 			$code = $result["error"];
+        else
+            $code = -1;
 
 		// SI CONNEXION REUSSI
 		if($code == 1)

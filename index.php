@@ -2,6 +2,7 @@
 require "config.php";
 require "madmin.php";
 require "auth.php";
+$credit = $MADMIN->getCredit();
 require "reload.php";
 require "virement.php";
 
@@ -155,7 +156,7 @@ if(isset($_GET["unblock"]))
       <div class="hero-unit">
         <h1>Bonjour, <?php echo $userName?> !</h1>
 	<br />
-        <p>Ton solde payutc est de : <strong><?php echo format_amount($MADMIN->getCredit()); ?> €</strong></p>
+        <p>Ton solde payutc est de : <strong><?php echo format_amount($credit); ?> €</strong></p>
       </div>
       <div class="row">
         <div class="span7" >
