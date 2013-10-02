@@ -6,6 +6,7 @@ require 'vendor/autoload.php';
 require "config.php";
 require "inc/functions.php";
 require "inc/SoapCookies.php";
+require "vendor/payutc-json-client/jsonclient/JsonClient.class.php";
 
 // Restriction des cookies au chemin de casper et démarrage de la session
 $sessionPath = parse_url($CONF['casper_url'], PHP_URL_PATH);

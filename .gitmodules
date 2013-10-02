@@ -1,0 +1,3 @@
+[submodule "vendor/payutc-json-client"]
+	path = vendor/payutc-json-client
+	url = https://github.com/payutc/payutc-json-client.git
