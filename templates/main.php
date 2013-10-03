@@ -53,7 +53,7 @@
             </p>
             <p>
                 <div class="input-append">
-                    <input name="montant" placeholder="0,00" type="number" class="span1" min="0" max="<?php echo $userDetails["credit"] ?>" />
+                    <input name="montant" placeholder="0,00" type="number" class="span1" min="0" max="<?php echo $userDetails["credit"] ?>" step="0.01" />
                     <span class="add-on">€</span>
                 </div>
             </p>
