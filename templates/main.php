@@ -14,18 +14,18 @@
                 <div class="alert alert-success"><?php echo $flash['reload_ok'] ?></div>
             <?php endif ?>
             <form action="reload" method="post" class="well form-inline">
-                    <div class="input-append">
-                        <?php
-                        if(isset($flash['reload_value'])) {
-                            $reload_value = $flash['reload_value'];
-                        } else {
-                            $reload_value = "";
-                        }
-                        ?>
-                        <input name="montant" type="number" placeholder="0,00" class="span1" min="<?php echo $minReload/100?>" max="<?php echo $maxReload/100?>" value="<?php echo $reload_value ?>" step="0.01" />
-                        <span class="add-on">€</span>
-                    </div>
-                    <button type="submit" class="btn btn-primary"><i class="icon-shopping-cart icon-white"></i> Recharger</button>                    
+                <div class="input-append">
+                    <?php
+                    if(isset($flash['reload_value'])) {
+                        $reload_value = $flash['reload_value'];
+                    } else {
+                        $reload_value = "";
+                    }
+                    ?>
+                    <input name="montant" type="number" placeholder="0,00" class="span1" min="<?php echo $minReload/100?>" max="<?php echo $maxReload/100?>" value="<?php echo $reload_value ?>" step="0.01" />
+                    <span class="add-on">€</span>
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="icon-shopping-cart icon-white"></i> Recharger</button>                    
             </form>
         <?php else: ?>
             <div class="alert alert-success">
@@ -69,42 +69,41 @@
                 <?php if($isBlocked): ?>
                     <span class="label label-important">Bloqué <i class="icon-remove icon-white"></i></span>
                 <? else: ?>
-                    <span class="label label-success">Débloqué <i class="icon-ok icon-white"></i></span>
-                <?php endif ?>
-            </p>
-            <p>
-                <?php if($isBlocked): ?>
-                    <a class="btn btn-success" href="unblock">Débloquer mon compte</a>
-                <?php else: ?>
-                    <a class="btn btn-danger" href="block">Bloquer mon compte</a>
-                <?php endif ?>
-            </p>
-        </div>
+                <span class="label label-success">Débloqué <i class="icon-ok icon-white"></i></span>
+            <?php endif ?>
+        </p>
+        <p>
+            <?php if($isBlocked): ?>
+                <a class="btn btn-success" href="unblock">Débloquer mon compte</a>
+            <?php else: ?>
+                <a class="btn btn-danger" href="block">Bloquer mon compte</a>
+            <?php endif ?>
+        </p>
     </div>
-    <div class="span8" >
-        <h2>Historique</h2>
-        <div>
-            <table id='historique' class='table table-striped'>
-                <?php foreach($historique as $elt): ?>
-                    <tr>
-                        <td><?php echo date('d/m/y H:i:s', strtotime($elt->date)) ?></td>
-                        <?php if($elt->type == "PURCHASE"): ?>
-                            <td><?php echo $elt->name ?> <small><?php echo $elt->fun ?></small></td>
-                            <td><span class="label label-important"> <i class="icon-minus icon-white"></i> <?php echo format_amount($elt->amount) ?> €</span></td>
-                        <?php elseif($elt->type == "RECHARGE"): ?>
-                            <td>Rechargement</td>
-                            <td><span class="label label-success"> <i class="icon-plus icon-white"></i> <?php echo format_amount($elt->amount) ?> €</span></td>
-                        <?php elseif($elt->type == "VIRIN"): ?>
-                            <td>Virement de <?php echo $elt->firstname ?> <?php $elt->lastname ?> (<?php echo $elt->name ?>)</td>
-                            <td><span class="label label-success"> <i class="icon-plus icon-white"></i> <?php echo format_amount($elt->amount)?> €</span></td>
-                        <?php elseif($elt->type == "VIROUT"): ?>
-                            <td>Virement à <?php echo $elt->firstname ?> <?php echo $elt->lastname ?> (<?php echo $elt->name ?>)</td>
-                            <td><span class="label label-important"> <i class="icon-minus icon-white"></i> <?php echo format_amount($elt->amount)?> €</span></td>
-                        <?php endif ?>
-                    </tr>
-                <?php endforeach ?>
-            </table>
-            <div class="pagination pagination-centered"><ul id="paging"></ul></div>
-        </div>
+</div>
+<div class="span8" >
+    <h2>Historique</h2>
+    <div>
+        <table id='historique' class='table table-striped'>
+            <?php foreach($historique as $elt): ?>
+                <tr>
+                    <td><?php echo date('d/m/y H:i:s', strtotime($elt->date)) ?></td>
+                    <?php if($elt->type == "PURCHASE"): ?>
+                        <td><?php echo $elt->name ?> <small><?php echo $elt->fun ?></small></td>
+                        <td><span class="label label-important"> <i class="icon-minus icon-white"></i> <?php echo format_amount($elt->amount) ?> €</span></td>
+                    <?php elseif($elt->type == "RECHARGE"): ?>
+                        <td>Rechargement</td>
+                        <td><span class="label label-success"> <i class="icon-plus icon-white"></i> <?php echo format_amount($elt->amount) ?> €</span></td>
+                    <?php elseif($elt->type == "VIRIN"): ?>
+                        <td>Virement de <?php echo $elt->firstname ?> <?php $elt->lastname ?> (<?php echo $elt->name ?>)</td>
+                        <td><span class="label label-success"> <i class="icon-plus icon-white"></i> <?php echo format_amount($elt->amount)?> €</span></td>
+                    <?php elseif($elt->type == "VIROUT"): ?>
+                        <td>Virement à <?php echo $elt->firstname ?> <?php echo $elt->lastname ?> (<?php echo $elt->name ?>)</td>
+                        <td><span class="label label-important"> <i class="icon-minus icon-white"></i> <?php echo format_amount($elt->amount)?> €</span></td>
+                    <?php endif ?>
+                </tr>
+            <?php endforeach ?>
+        </table>
+        <div class="pagination pagination-centered"><ul id="paging"></ul></div>
     </div>
 </div>
