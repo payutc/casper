@@ -6,7 +6,7 @@
 <div class="row">
     <div class="span4">
         <h2>Rechargement <a name="rechargement" rel="tooltip" data-placement="bottom" data-original-title="Recharger ton compte par Carte Bancaire" class="hidden-phone"><i class="icon-question-sign"></i></a></h2>
-        <?php if($max_reload != 0): ?>
+        <?php if($canReload): ?>
             <?php if(isset($flash['reload_erreur'])): ?>
                 <div class="alert alert-error"><?php echo $flash['reload_erreur'] ?></div>
             <?php endif ?>
@@ -22,14 +22,14 @@
                             $reload_value = "";
                         }
                         ?>
-                        <input name="montant" type="number" placeholder="0,00" class="span1" min="<?php echo $min_reload/100?>" max="<?php echo $max_reload/100?>" value="<?php echo $reload_value ?>" step="0.01" />
+                        <input name="montant" type="number" placeholder="0,00" class="span1" min="<?php echo $minReload/100?>" max="<?php echo $maxReload/100?>" value="<?php echo $reload_value ?>" step="0.01" />
                         <span class="add-on">€</span>
                     </div>
                     <button type="submit" class="btn btn-primary"><i class="icon-shopping-cart icon-white"></i> Recharger</button>                    
             </form>
         <?php else: ?>
             <div class="alert alert-success">
-                Ton compte ne peut être rechargé sans dépasser le plafond maximum.
+                Ton compte ne peut être rechargé : <?php echo $cannotReloadMessage ?>
             </div>
         <?php endif ?> 
         <h2>Virement à un ami <a name="virement" rel="tooltip" data-placement="bottom" data-original-title="Transférer gratuitement de l'argent à un autre utilisateur de payutc" class="hidden-phone"><i class="icon-question-sign"></i></a></h2>

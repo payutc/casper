@@ -38,23 +38,34 @@ $app->get('/', function() use($app) {
         "title" => Config::get("title")
     ));
     
-    $reloadInfo = JsonClientFactory::getInstance()->getClient("RELOAD")->info();
+    // The array that will be sent to the template
+    $pageData = array();
+    
+    $pageData["canReload"] = true;
+    try {
+        $reloadInfo = JsonClientFactory::getInstance()->getClient("RELOAD")->info();
+        $pageData["maxReload"] = $reloadInfo->max_reload;
+        $pageData["minReload"] = $reloadInfo->min;
+    }
+    catch(\JsonClient\JsonException $e){
+        $pageData["canReload"] = false;
+        $pageData["cannotReloadMessage"] = $e->getMessage();
+    }
+    
+    $pageData["isBlocked"] = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->isBlockedMe();
+    
     $account = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->historique();
-    $blockedStatus = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->isBlockedMe();
+    $pageData["historique"] = $account->historique;
     
     $env = $app->environment();
+    $pageData["userDetails"] = array(
+        "firstname" => $env["user_data"]->firstname,
+        "lastname" => $env["user_data"]->lastname,
+        "credit" => $account->credit
+    );
     
-    $app->render('main.php', array(
-        "userDetails" => array(
-            "firstname" => $env["user_data"]->firstname,
-            "lastname" => $env["user_data"]->lastname,
-            "credit" => $account->credit
-        ),
-        "max_reload" => $reloadInfo->max_reload,
-        "min_reload" => $reloadInfo->min,
-        "historique" => $account->historique,
-        "isBlocked" => $blockedStatus
-    ));
+    $app->render('main.php', $pageData);
+    
     $app->render('footer.php');
 })->name('home');
 
