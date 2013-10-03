@@ -1,121 +1,160 @@
 <?php
 // Slim
 require 'vendor/autoload.php';
+use \Payutc\Casper\Config;
+use \Payutc\Casper\JsonClientFactory;
+use \Payutc\Casper\JsonClientMiddleware;
 
-// Config et fonctions utiles
-require "config.php";
-require "inc/functions.php";
-require "inc/SoapCookies.php";
-require "vendor/payutc-json-client/jsonclient/JsonClient.class.php";
+// Load configuration
+require "config.inc.php";
+Config::initFromArray($_CONFIG);
 
-// Restriction des cookies au chemin de casper et démarrage de la session
-$sessionPath = parse_url($CONF['casper_url'], PHP_URL_PATH);
+// Settings for cookies
+$sessionPath = parse_url(Config::get("casper_url"), PHP_URL_PATH);
 session_set_cookie_params(0, $sessionPath);
 session_start();
 
-// Connexion SOAP
-$MADMIN = new SoapClient($CONF['soap_url']);
+// Slim initialization
+$app = new \Slim\Slim(Config::get('slim_config'));
 
-// Lancement de Slim
-$app = new \Slim\Slim();
+// This middleware loads all our json clients
+$app->add(new JsonClientMiddleware);
 
-// Ce Middleware fait persister les cookies du SOAP
-$app->add(new \Payutc\SoapCookies);
+// Route middleware to check that a user is logged in
+function userLoggedIn(){
+    $app = \Slim\Slim::getInstance();
+    
+    // On récupère les infos du user
+    $status = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->getStatus();
+    
+    if(empty($status->application)){
+        $app->getLog()->debug("No app logged in, calling loginApp");
+        // Connexion de l'application
+        try {
+            JsonClientFactory::getInstance()->getClient("MYACCOUNT")->loginApp(array(
+                "key" => Config::get("application_key")
+            ));
+        } catch (\JsonClient\JsonException $e) {
+            $app->getLog()->error("Application login error: ".$e->getMessage());
+            throw $e;
+        }
+    }
+    
+    // Si on a aucun user chargé, on repasse par le cas
+    if(empty($status->user)){
+        $app->getLog()->debug("No user logged in, redirect to login route");
+        $app->redirect($app->urlFor('login'));
+	}
+    
+    $env = $app->environment();
+    $env["user_data"] = $status->user_data;
+}
+
+// A few helpers to handle amounts in cents
+function format_amount($val) {
+	return number_format($val/100, 2, ',', ' ');
+}
+
+function parse_user_amount($val) {
+    $amount = str_replace(',','.', $val);
+    return $amount*100;
+}
 
 // --- Coeur de casper
 
 // Page principale
-$app->get('/', 'userLoggedIn', function() use($app, $CONF, $MADMIN) {
+$app->get('/', 'userLoggedIn', function() use($app) {
     $app->render('header.php', array(
-        "title" => $CONF["title"]
+        "title" => Config::get("title")
     ));
+    
+    $reloadInfo = JsonClientFactory::getInstance()->getClient("RELOAD")->info();
+    $account = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->historique();
+    $blockedStatus = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->isBlockedMe();
+    
+    $env = $app->environment();
+    
     $app->render('main.php', array(
-        "userDetails" => $MADMIN->getUserDetails(),
-        "max_reload" => $MADMIN->getMaxReload(),
-        "min_reload" => $MADMIN->getMinReload(),
-        "histo" => get_histo($MADMIN),
-        "isBlocked" => $MADMIN->isBlocked()
+        "userDetails" => array(
+            "firstname" => $env["user_data"]->firstname,
+            "lastname" => $env["user_data"]->lastname,
+            "credit" => $account->credit
+        ),
+        "max_reload" => $reloadInfo->max_reload,
+        "min_reload" => $reloadInfo->min,
+        "historique" => $account->historique,
+        "isBlocked" => $blockedStatus
     ));
     $app->render('footer.php');
 })->name('home');
 
 // Blocage du compte
-$app->get('/block', 'userLoggedIn', function() use ($app, $MADMIN) {
-    $MADMIN->blockMe();
+$app->get('/block', 'userLoggedIn', function() use ($app) {
+    JsonClientFactory::getInstance()->getClient("MYACCOUNT")->setSelfBlock(array(
+        "blocage" => true
+    ));
     $app->response()->redirect($app->urlFor('home'));
 });
 
 // Déblocage du compte
-$app->get('/unblock', 'userLoggedIn', function() use ($app, $MADMIN) {
-    $MADMIN->deblock();
+$app->get('/unblock', 'userLoggedIn', function() use ($app) {
+    JsonClientFactory::getInstance()->getClient("MYACCOUNT")->setSelfBlock(array(
+        "blocage" => false
+    ));
     $app->response()->redirect($app->urlFor('home'));
 });
 
 // Autocomplete du virement
-$app->get('/ajax', 'userLoggedIn', function() use ($MADMIN) {
-    echo json_encode($MADMIN->userAutocomplete($_GET["search"]));
+$app->get('/ajax', 'userLoggedIn', function() use ($app) {
+    if(!empty($_GET["q"])) {
+        $search = JsonClientFactory::getInstance()->getClient("RELOAD")->userAutocomplete(array(
+            "queryString" => $_GET["q"]
+        ));
+        
+        echo json_encode($search);        
+    }
 });
 
 // Départ vers le rechargement
-$app->post('/reload', 'userLoggedIn', function() use ($app, $MADMIN, $CONF) {
+$app->post('/reload', 'userLoggedIn', function() use ($app) {
     if(empty($_POST["montant"])) {
         $app->flash('error_reload', "Saisissez un montant");
         $app->response()->redirect($app->urlFor('home'));
     }
 
     $amount = parse_user_amount($_POST['montant']);
-        
-    $can = $MADMIN->canReload($amount);
-    if($can == 1) {
-        // On peut recharger
-        echo $MADMIN->reload($amount, $CONF['casper_url'].'postreload');
-        $app->stop();
-    } else {
-        $erreur = str_getcsv(substr($MADMIN->getErrorDetail($can), 0, -2));
-        $app->flash('reload_erreur', '<p>Erreur n°'.$erreur[0].' : <b>'.$erreur[1].'</b></p><p>'.$erreur[2].'</p>');
+    
+    try {
+        $reloadUrl = JsonClientFactory::getInstance()->getClient("RELOAD")->reload(array(
+            "amount" => $amount,
+            "callbackUrl" => Config::get("casper_url")
+        ));
+        $app->redirect($reloadUrl);
+    }
+    catch(\JsonClient\JsonException $e){
+        $app->flash('reload_erreur', '<p>Erreur</p><p>'.$e->getMessage().'</p>');
         $app->flash('reload_value', $amount/100);
-        
+        $app->getLog()->error("Reload failed: ".$e->getMessage());
         $app->response()->redirect($app->urlFor('home'));
     }
 });
 
-// Retour du rechargement
-$app->get('/postreload', 'userLoggedIn', function() use ($app) {
-    // Génération du message à afficher
-    switch($_GET['paybox']) {
-        case 'erreur':
-            $app->flash('reload_erreur', 'Erreur Paybox n°'.$_GET['NUMERR']);
-        break;
-        case 'annule':
-            $app->flash('reload_erreur', 'Vous avez annulé le rechargement.');
-        break;
-        case 'refuse':
-            $app->flash('reload_erreur', 'La transaction a été refusée.');
-        break;
-        case 'effectue':
-            $app->flash('reload_ok', 'Votre compte à été rechargé.');
-        break;
-    }
-    
-    // Retour vers la page d'accueil
-    $app->redirect($app->urlFor('home'));
-});
-
 // Virement à un ami
-$app->post('/virement', 'userLoggedIn', function() use ($app, $MADMIN, $CONF) {
+$app->post('/virement', 'userLoggedIn', function() use ($app) {
     // Récupèration du montant en cents
     $montant = parse_user_amount($_POST['montant']);
     
-    // Appel serveur
-    $code = $MADMIN->transfert($montant, $_POST["userId"]);
-
-    // Si le virement a échoué
-    if($code != 1){
-        $erreur = str_getcsv(substr($MADMIN->getErrorDetail($code), 0, -2));
-        $app->flash('virement_erreur', '<p>Erreur n°'.$erreur[0].' : <b>'.$erreur[1].'</b></p><p>'.$erreur[2].'</p>');
-        $app->flash('virement_value', $montant/100);
-    } else {
-        $app->flash('virement_ok', 'Le virement de '.format_number($montant).' € à réussi.');
+    try {
+        $virement = JsonClientFactory::getInstance()->getClient("TRANSFER")->transfer(array(
+            "amount" => $montant,
+            "userID" => $_POST['userId'],
+            "message" => $_POST['message']
+        ));
+        
+        $app->flash('virement_ok', 'Le virement de '.format_amount($montant).' € à réussi.');
+    }
+    catch(\JsonClient\JsonException $e){
+        $app->flash('virement_erreur', $e->getMessage());
     }
     
     // Retour vers la page d'accueil
@@ -125,9 +164,9 @@ $app->post('/virement', 'userLoggedIn', function() use ($app, $MADMIN, $CONF) {
 // --- Enregistrement
 
 // Affichage de la charte
-$app->get('/register', function() use ($app, $CONF) {
+$app->get('/register', function() use ($app) {
     $app->render('header.php', array(
-        "title" => $CONF["title"]
+        "title" => Config::get("title")
     ));
 
     $app->render('register.php');
@@ -136,20 +175,17 @@ $app->get('/register', function() use ($app, $CONF) {
 })->name('register');
 
 // Enregistrement après validation de la charte
-$app->post('/register', function() use ($app, $MADMIN) {
-    // Appel serveur
-    $result = $MADMIN->register();
-    
-    if(isset($result["success"])) {
+$app->post('/register', function() use ($app) {
+    try {
+        // Appel serveur
+        $result = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->register();
+        
         // Si ok, go vers la page d'accueil
         $app->redirect($app->urlFor('home'));
-    } else {
-        if(isset($result["error_msg"])) {
-            // Si on a une erreur on l'affiche
-            $app->flash('register_erreur', $result["error_msg"]);
-        } else {
-            $app->flash('register_erreur', "Échec de la création du compte.");
-        }
+    }
+    catch(\JsonClient\JsonException $e){
+        // Si on a une erreur on l'affiche
+        $app->flash('register_erreur', $e->getMessage());
         
         // On n'a pas réussi à s'enregistrer, retour vers la charte
         $app->redirect($app->urlFor('register'));
@@ -157,48 +193,48 @@ $app->post('/register', function() use ($app, $MADMIN) {
 });
 
 // --- CAS
-$app->get('/login', function() use ($app, $CONF, $MADMIN) {
+$app->get('/login', function() use ($app) {
     // Si pas de ticket, c'est une invitation à se connecter
     if(empty($_GET["ticket"])) {
+        $app->getLog()->debug("No CAS ticket, unsetting cookies and redirecting to CAS");
         // On jette les cookies actuels
-        unset($_SESSION['cookies']);
+        JsonClientFactory::getInstance()->destroyCookie();
         
         // Redirection vers le CAS
-        $app->redirect($MADMIN->getCasUrl()."/login?service=".$CONF['casper_url'].'login');
+        $app->redirect(JsonClientFactory::getInstance()->getClient("MYACCOUNT")->getCasUrl()."/login?service=".Config::get("casper_url").'login');
     } else {
-        // Connexion au serveur avec le ticket
-        $result = $MADMIN->loginCas($_GET["ticket"], $CONF['casper_url'].'login');
-
-        if(isset($result["success"])) {
-            // On stocke les cookies (SoapCookies les rechargera après)
-            $_SESSION['cookies'] = $MADMIN->_cookies;
+        // Connexion au serveur avec le ticket CAS
+        try {
+            $app->getLog()->debug("Trying loginCas");
             
-            // Go vers la page d'accueil
-            $app->redirect($app->urlFor('home'));
-        } else if(isset($result["error"])) {
-            // Si non inscrit, création de compte
-            if($result["error"] == 405) {
-                // On doit garder les cookies car le serveur garde le login de son côté
-                $_SESSION['cookies'] = $MADMIN->_cookies;
+            $result = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->loginCas(array(
+                "ticket" => $_GET["ticket"],
+                "service" => Config::get("casper_url").'login'
+            ));
+        } catch (\JsonClient\JsonException $e) {
+            // Si l'utilisateur n'existe pas, go inscription
+            if($e->getType() == "Payutc\Exception\UserNotFound"){
+                // On doit garder le cookie car le serveur garde le login de son côté
+                JsonClientFactory::getInstance()->setCookie(JsonClientFactory::getInstance()->getClient("MYACCOUNT")->cookie);
                 
                 // Redirection vers la charte
                 $app->redirect($app->urlFor('register'));
-            } else {
-                if(isset($result["error_msg"])) {
-                    // Si on a un message, on l'affiche
-                    $login_erreur = $result["error_msg"];
-                } else {
-                    // Sinon, on essaie de récupérer le message correspondant à ce code d'erreur
-                    $erreur = str_getcsv(substr($MADMIN->getErrorDetail($result["error"]), 0, -2));
-                    $login_erreur = '<p>Erreur n°'.$erreur[0].' : <b>'.$erreur[1].'</b></p><p>'.$erreur[2].'</p>';
-                }
-                
-                // Affichage d'une page avec juste l'erreur
-                $app->render('header.php', array("title" => $CONF["title"]));                
-                $app->render('error.php', array('login_erreur' => $login_erreur));
-                $app->render('footer.php');
             }
-        }        
+            
+            $app->getLog()->warn("Error with CAS ticket ".$_GET["ticket"].": ".$e->getMessage());
+            
+            // Affichage d'une page avec juste l'erreur
+            $app->render('header.php', array("title" => Config::get("title", "payutc")));
+            $app->render('error.php', array('login_erreur' => 'Erreur de login CAS<br /><a href="'.$app->urlFor('login').'">Réessayer</a>'));
+            $app->render('footer.php');
+            $app->stop();
+        }
+
+        // On stocke le cookie
+        JsonClientFactory::getInstance()->setCookie(JsonClientFactory::getInstance()->getClient("MYACCOUNT")->cookie);
+            
+        // Go vers la page d'accueil
+        $app->redirect($app->urlFor('home'));
     }
 })->name('login');
 

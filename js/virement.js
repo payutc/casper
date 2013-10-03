@@ -1,7 +1,7 @@
 $('#userName').typeahead({
     source: function(input, process){
         $('#userId').val("");
-        $.get('ajax', 'search='+input, function(data) {
+        $.get('ajax', 'q='+input, function(data) {
             map = {};
             usernames = [];
         
