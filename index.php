@@ -20,36 +20,6 @@ $app = new \Slim\Slim(Config::get('slim_config'));
 // This middleware loads all our json clients
 $app->add(new JsonClientMiddleware);
 
-// Route middleware to check that a user is logged in
-function userLoggedIn(){
-    $app = \Slim\Slim::getInstance();
-    
-    // On récupère les infos du user
-    $status = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->getStatus();
-    
-    if(empty($status->application)){
-        $app->getLog()->debug("No app logged in, calling loginApp");
-        // Connexion de l'application
-        try {
-            JsonClientFactory::getInstance()->getClient("MYACCOUNT")->loginApp(array(
-                "key" => Config::get("application_key")
-            ));
-        } catch (\JsonClient\JsonException $e) {
-            $app->getLog()->error("Application login error: ".$e->getMessage());
-            throw $e;
-        }
-    }
-    
-    // Si on a aucun user chargé, on repasse par le cas
-    if(empty($status->user)){
-        $app->getLog()->debug("No user logged in, redirect to login route");
-        $app->redirect($app->urlFor('login'));
-	}
-    
-    $env = $app->environment();
-    $env["user_data"] = $status->user_data;
-}
-
 // A few helpers to handle amounts in cents
 function format_amount($val) {
 	return number_format($val/100, 2, ',', ' ');
@@ -63,7 +33,7 @@ function parse_user_amount($val) {
 // --- Coeur de casper
 
 // Page principale
-$app->get('/', 'userLoggedIn', function() use($app) {
+$app->get('/', function() use($app) {
     $app->render('header.php', array(
         "title" => Config::get("title")
     ));
@@ -89,7 +59,7 @@ $app->get('/', 'userLoggedIn', function() use($app) {
 })->name('home');
 
 // Blocage du compte
-$app->get('/block', 'userLoggedIn', function() use ($app) {
+$app->get('/block', function() use ($app) {
     JsonClientFactory::getInstance()->getClient("MYACCOUNT")->setSelfBlock(array(
         "blocage" => true
     ));
@@ -97,7 +67,7 @@ $app->get('/block', 'userLoggedIn', function() use ($app) {
 });
 
 // Déblocage du compte
-$app->get('/unblock', 'userLoggedIn', function() use ($app) {
+$app->get('/unblock', function() use ($app) {
     JsonClientFactory::getInstance()->getClient("MYACCOUNT")->setSelfBlock(array(
         "blocage" => false
     ));
@@ -105,7 +75,7 @@ $app->get('/unblock', 'userLoggedIn', function() use ($app) {
 });
 
 // Autocomplete du virement
-$app->get('/ajax', 'userLoggedIn', function() use ($app) {
+$app->get('/ajax', function() use ($app) {
     if(!empty($_GET["q"])) {
         $search = JsonClientFactory::getInstance()->getClient("RELOAD")->userAutocomplete(array(
             "queryString" => $_GET["q"]
@@ -116,7 +86,7 @@ $app->get('/ajax', 'userLoggedIn', function() use ($app) {
 });
 
 // Départ vers le rechargement
-$app->post('/reload', 'userLoggedIn', function() use ($app) {
+$app->post('/reload', function() use ($app) {
     if(empty($_POST["montant"])) {
         $app->flash('error_reload', "Saisissez un montant");
         $app->response()->redirect($app->urlFor('home'));
@@ -140,7 +110,7 @@ $app->post('/reload', 'userLoggedIn', function() use ($app) {
 });
 
 // Virement à un ami
-$app->post('/virement', 'userLoggedIn', function() use ($app) {
+$app->post('/virement', function() use ($app) {
     // Récupèration du montant en cents
     $montant = parse_user_amount($_POST['montant']);
     
