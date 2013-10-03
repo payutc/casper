@@ -22,7 +22,7 @@
         <div class="container">
           <a class="brand" href=""><?php echo $title ?></a>
           <div>
-            <p class="navbar-text pull-right"><a href="login">déconnexion</a></p>
+            <p class="navbar-text pull-right"><a href="logout">déconnexion</a></p>
           </div>
         </div>
       </div>
