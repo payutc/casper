@@ -1,4 +1,5 @@
-/config.php
+/config.inc.php
 /composer.lock
 /composer.phar
 /vendor/
+/logs/
