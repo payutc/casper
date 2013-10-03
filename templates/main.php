@@ -68,7 +68,7 @@
                 État du compte : 
                 <?php if($isBlocked): ?>
                     <span class="label label-important">Bloqué <i class="icon-remove icon-white"></i></span>
-                <? else: ?>
+                <?php else: ?>
                 <span class="label label-success">Débloqué <i class="icon-ok icon-white"></i></span>
             <?php endif ?>
         </p>
