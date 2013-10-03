@@ -1,0 +1,22 @@
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+
+.hero-unit {
+  padding: 40px;
+}
+
+@media(max-width: 480px) {
+  .hero-unit h1 {
+    font-size: 18px;
+    letter-spacing: 0;
+  }
+  .hero-unit {
+    padding: 10px;
+    font-size: 14px;
+  }
+  h2 {
+    font-size: 25px;
+  }
+}
