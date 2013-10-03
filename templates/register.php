@@ -1,61 +1,23 @@
 <div class="row">
-    <?php if(isset($flash['register_erreur'])): ?>
-        <div class="alert alert-error"><?php echo $flash['register_erreur'] ?></div>
-    <?php endif ?>
-    <div class="span11 well">
-        <h1>Première connexion à payutc</h1>
-        <p>
-            Bienvenue, vous allez bientôt ouvrir un compte payutc. <br /><br />
-            <h2> Information concernant vos données </h2>
-            Les informations recueillies par payutc sont nécessaires afin au fonctionnement de votre porte monaie électronique. 
-            Elles font l'objet d'un traitement informatique et sont destinées à l'association BDE UTC. <br />
-            Conformément à la loi « informatique et libertés » du 6 janvier 1978 modifiée en 2004, vous bénéficiez d'un droit d'accès et de rectification aux informations qui vous concernent. Si vous souhaitez exercer ce droit et obtenir communication des informations vous concernant, veuillez vous adresser à l'association BDE-UTC.<br />
-            <br />
-            Vos informations peuvent être retransmises partiellement aux différentes associations utilisant le système payutc pour encaisser des paiements.<br />
-            <br />
-            Votre historique de consommation peut être conservé jusqu'à 1an après votre dernière utilisation de payutc. <br /> Votre solde d'argent peut quand à lui être conservé jusqu'à 2ans après votre dérnière utilisation de payutc <br />
-            <br />
-            <br />
-            <h2> Information concernant les usagers du picasso </h2>            
+    <div class="span12">
+        <?php if(isset($flash['register_erreur'])): ?>
+            <div class="alert alert-error"><?php echo $flash['register_erreur'] ?></div>
+        <?php endif ?>
+        <div class="well">
+            <h1>Bienvenue sur payutc</h1>
+            <p><em>Pour continuer à utiliser le service, vous devez lire et accepter les conditions suivantes.</em></p>
+        
+            <p>Les informations recueillies par payutc sont nécessaires au fonctionnement de votre porte monaie électronique. Elles font l'objet d'un traitement informatique et sont destinées à l'association BDE-UTC. Conformément à la loi « informatique et libertés » du 6 janvier 1978 modifiée en 2004, vous bénéficiez d'un droit d'accès et de rectification aux informations qui vous concernent. Si vous souhaitez exercer ce droit et obtenir communication des informations vous concernant, veuillez vous adresser à BDE-UTC payutc par e-mail.</p>
+            <p>Dans le cadre du fonctionnement de payutc, vos informations peuvent être retransmises aux différentes associations utilisant le système pour encaisser des paiements.</p>
+        
+            <p>Votre historique de consommation est conservé jusqu'à un an après votre dernière utilisation de payutc et votre solde d'argent jusqu'à deux ans après votre dérnière utilisation de payutc. Après votre départ de l'UTC, ce délai peut être réduit à six mois. À l'expiration de ce délai, le solde d'argent conservé sur payutc est perdu.</p>
+        
+            <p>payutc est hébergé sur le réseau. Son utilisation génère donc des traces pouvant être utilisées en cas de menace sur la sécurité du réseau, ou de demande des autorités compétentes, à des fins d’identification d’actions illicites et de leurs auteurs. Pour plus de détails, nous vous invitons à consulter la <a href="http://www.utc.fr/wiki/charte_informatique/charte.pdf" target="_blank">Charte du bon usage des moyens et ressources informatiques</a>. Ce document rappelle également que l'article L.323-1 du Nouveau code pénal prévoit que « le fait d’accéder ou de se maintenir, frauduleusement, dans tout ou partie d’un système de traitement automatisé de données est puni d’un an d’emprisonnement et de 15 000 € d’amende ». Dans le cas de l'introduction, la suppression ou la modification frauduleuses de données dans un système informatique, la peine est portée à trois ans 
+    d'emprisonnement et 45 000 € d'amende.</p>
 
-            <h3>Charte du Pic'asso</h3>
-            <br />
-            Utcéen, Utcéene,<br />
-            Vous allez être amené(e), au cours de ce semestre, à occuper les locaux du foyer étudiant, le Pic'asso et ainsi bénéficier des services proposés.  C'est pourquoi nous vous demandons de lire attentivement et d'adhérer à la charte suivante: <br />
-            <strong> J'affirme être étudiant ou personnel de l'UTC et avoir connaissance de la convention d'occupation de la maison des étudiants. </strong>
-            <br />Nous nous permettons de vous rappeler quelques règles dictées par la loi et le bon sens, qui permettront longue vie à notre foyer adoré:
-            <br />Règlement français :<br />
-            <br />Même en l'absence de tout signe d'ivresse manifeste, le fait de conduire un véhicule sous l'empire d'un état alcoolique caractérisé par une concentration d'alcool dans le sang égale ou supérieure à 0,50 gramme par litre, sans atteindre les seuils fixés à l'article L. 234-1 est puni par la loi. 
-            Code de la route – article R234-1 (en gros, prends pas le volant après 2 Campus)<br /> 
-            Le fait pour les débitants de boissons de donner à boire à des gens manifestement ivres ou de les recevoir dans leurs établissements est puni par la loi.
-            Code de la santé publique - Article R3353-2 (astreinteur, si un homme ne marche pas droit, ne remplis pas son foie) 
-            <br />
-            Il est interdit de vendre de l'alcool à des utcéens de moins de 18ans. <br />
-            Code de la santé publique. ART. L. 3342-1, L. 3342-3 (pas d'alcool dans le biberon)<br />
-            Règlement du foyer Pic'asso : <br />
-            <ul>
-                <li> Le foyer doit être vidé pour 22h afin de permettre le nettoyage et le rangement </li>
-                <li> Le jardin doit être vidé à 22h et le parking à 23h. Les nuisances sonores doivent être limitées avant 22h et inexistantes après 22h.</li>
-                <li> Le vente de boissons de deuxième catégorie est ouverte de 18h30 à 21h30 du lundi au vendredi sauf en cas d'estudiantine ou de décision de l'équipe du foyer.</li>
-                <li> Les bouteilles consignées doivent être ramenées au foyer ou déposées dans les caisses installées à cet effet.</li>
-            </ul>
-            <br />
-            Bien évidemment, ceci n'est qu'un rappel de quelques lois, toutes les autres sont également valables. Toute anomalie sur une soirée (consommation excessive d'alcool, incident,…) donnera lieu à une exigence plus forte sur la soirée suivante. Toute soirée réussie engendrera une répercussion positive. Cette charte ne tend pas à réprimer ni à interdire toute consommation d’alcool mais à prévenir tout comportement à risque.  <br />
-            <br />
-            <br />
-            Je m'engage à respecter les règles de fonctionnement du foyer.<br />
-            Je m'engage à ne pas détériorer l'état de propreté des locaux et de ses abords.<br />
-            Je m'engage à avoir un comportement décent et à respecter les décisions prises par les permanences et les étudiants d'astreintes.<br />
-            Je m'engage à rester vigilant et modéré vis-à-vis de ma consommation de boissons alcoolisées.<br />
-            Je m'engage à respecter le règlement intérieur de l'UTC et à ne pas introduire de boissons alcoolisées dans l'enceinte de l'établissement. L'abus d’alcool est dangereux pour la santé et est à consommer avec modération.<br />
-            En cas de manquement constaté je m'engage à présenter mon badge aux agents de service de l'UTC en faisant la demande.<br />
-            <br />
-            J'ai conscience que tout manquement à ces engagements m'expose à des sanctions de l'équipe du foyer (blocage du compte), du BDE-UTC (radiation), voire du conseil de discipline de l'UTC (sanction pouvant aller jusqu'à l'exclusion) en fonction du degrés de gravité de mes actes<br />
-            Je déclare avoir lu et compris les termes de cette charte et je m’engage à les respecter<br />
-
-        </p>
-        <br />
-        Je déclare avoir lu et compris les termes de cette charte et je m'engage à les respecter.<br />    
-        <form action="register" method="post"><input type="submit" class="btn btn-primary btn-large pull-right" value="J'accepte les conditions générales d'utilisation de payutc" /></form> 
+            <form action="register" method="post">
+                <input type="submit" class="btn btn-primary btn-large" value="J'accepte" />
+            </form> 
+        </div>
     </div>
 </div>
