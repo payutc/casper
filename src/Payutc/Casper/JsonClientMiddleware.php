@@ -56,7 +56,15 @@ class JsonClientMiddleware extends \Slim\Middleware
         $env = $app->environment();
         $env["user_data"] = $status->user_data;
         
-        // Run inner middleware and application
-        $this->next->call();
+        try {
+            // Run inner middleware and application
+            $this->next->call();
+        }
+        catch(\JsonClient\JsonException $e){
+            if($app->request()->getResourceUri() != '/login' && $e->getType() == "Payutc\Exception\CheckRightException"){
+                $app->getLog()->debug("Caught CheckRightException (".$e->getMessage()."), redirect to login route");
+                $app->response()->redirect($app->urlFor('login'));
+            }
+        }
     }
 }
