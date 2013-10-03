@@ -1,0 +1,12 @@
+{
+    "require": {
+        "slim/slim": "2.*",
+        "slim/extras": "*"
+    },
+    "autoload": {
+        "classmap": ["vendor/payutc-json-client/jsonclient/"],
+        "psr-0": {
+            "Payutc": "src/"
+        }
+    }
+}
