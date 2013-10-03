@@ -20,7 +20,7 @@ class JsonClientMiddleware extends \Slim\Middleware
         // If we have no cookie, redirect to login
         if($app->request()->getResourceUri() != '/login' && !JsonClientFactory::getInstance()->getCookie()) {
             $app->getLog()->debug("No cookie, redirecting to login");
-            $app->redirect($app->urlFor('login'));
+            $app->response()->redirect($app->urlFor('login'));
         }
         
         // Create the client for each service (if it does not exist)
@@ -49,7 +49,7 @@ class JsonClientMiddleware extends \Slim\Middleware
         // If no user loaded, go to cas
         if($app->request()->getResourceUri() != '/login' && $app->request()->getResourceUri() != '/register' && empty($status->user)){
             $app->getLog()->debug("No user logged in, redirect to login route");
-            $app->redirect($app->urlFor('login'));
+            $app->response()->redirect($app->urlFor('login'));
     	}
     
         // Save user data in environment
