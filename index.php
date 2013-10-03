@@ -102,7 +102,7 @@ $app->post('/reload', function() use ($app) {
         $app->redirect($reloadUrl);
     }
     catch(\JsonClient\JsonException $e){
-        $app->flash('reload_erreur', '<p>Erreur</p><p>'.$e->getMessage().'</p>');
+        $app->flash('reload_erreur', $e->getMessage());
         $app->flash('reload_value', $amount/100);
         $app->getLog()->error("Reload failed: ".$e->getMessage());
         $app->response()->redirect($app->urlFor('home'));
