@@ -219,5 +219,20 @@ $app->get('/login', function() use ($app) {
     }
 })->name('login');
 
+$app->get('/logout', function() use ($app) {
+    // On clot la session avec le serveur
+    try {
+        JsonClientFactory::getInstance()->getClient("MYACCOUNT")->logout();        
+    }
+    catch (\JsonClient\JsonException $e){
+        // No worries, we'll just continue
+    }
+    
+    // Throw our cookies away
+    JsonClientFactory::getInstance()->destroyCookie();
+    
+    // Logout from CAS
+    $app->redirect(JsonClientFactory::getInstance()->getClient("MYACCOUNT")->getCasUrl()."/logout?service=".Config::get("casper_url").'login');
+})->name('logout');
 
 $app->run();
