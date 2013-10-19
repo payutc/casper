@@ -71,17 +71,29 @@ $app->get('/', function() use($app) {
 
 // Blocage du compte
 $app->get('/block', function() use ($app) {
-    JsonClientFactory::getInstance()->getClient("MYACCOUNT")->setSelfBlock(array(
-        "blocage" => true
-    ));
+    try {
+        JsonClientFactory::getInstance()->getClient("MYACCOUNT")->setSelfBlock(array(
+            "blocage" => true
+        ));        
+    }
+    catch(\JsonClient\JsonException $e){
+        $app->flash('block_erreur', $e->getMessage());
+        $app->getLog()->error("Block failed: ".$e->getMessage());
+    }
     $app->response()->redirect($app->urlFor('home'));
 });
 
 // Déblocage du compte
 $app->get('/unblock', function() use ($app) {
-    JsonClientFactory::getInstance()->getClient("MYACCOUNT")->setSelfBlock(array(
-        "blocage" => false
-    ));
+    try {
+        JsonClientFactory::getInstance()->getClient("MYACCOUNT")->setSelfBlock(array(
+            "blocage" => false
+        ));        
+    }
+    catch(\JsonClient\JsonException $e){
+        $app->flash('block_erreur', $e->getMessage());
+        $app->getLog()->error("Unblock failed: ".$e->getMessage());
+    }
     $app->response()->redirect($app->urlFor('home'));
 });
 
