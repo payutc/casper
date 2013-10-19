@@ -63,6 +63,9 @@
                     
         </form>
         <h2>Blocage badge <a name="virement" rel="tooltip" data-placement="bottom" data-original-title="En cas de perte ou vol de ton badge, tu peux ici bloquer et débloquer son utilisation pour payutc" class="hidden-phone"><i class="icon-question-sign"></i></a></h2>
+        <?php if(isset($flash['block_erreur'])): ?>
+            <div class="alert alert-error"><?php echo $flash['block_erreur'] ?></div>
+        <?php endif ?>
         <div class="well">
             <p>
                 État du compte : 
