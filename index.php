@@ -259,7 +259,7 @@ $app->get('/validation', function() use ($app) {
     }
     else {
         // URL where user will go after login
-        $_SESSION['login_redirect'] = "websale?tra_id=".$_GET['tra_id']."&token=".$_GET['token'];
+        $_SESSION['login_redirect'] = "validation?tra_id=".$_GET['tra_id']."&token=".$_GET['token'];
         
         $app->render('websale.php', array(
             "purchases" => $transactionData->purchases,

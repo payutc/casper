@@ -48,11 +48,10 @@ class JsonClientMiddleware extends \Slim\Middleware
             if(empty($status->user)){
                 $env["loggedin"] = false;
         	}
-            
-            $this->next->call();
-            return;
         }
-        else {
+        
+        // If not in websale or in websale with a logged in user
+        if (strpos($app->request()->getPathInfo(), '/validation') !== 0 || $env["loggedin"]) {
             // If we have no cookie, redirect to login
             if($app->request()->getResourceUri() != '/login' && !JsonClientFactory::getInstance()->getCookie()) {
                 $app->getLog()->debug("No cookie, redirecting to login");
@@ -90,16 +89,16 @@ class JsonClientMiddleware extends \Slim\Middleware
     
             // Save user data in environment
             $env["user_data"] = $status->user_data;
+        }
         
-            try {
-                // Run inner middleware and application
-                $this->next->call();
-            }
-            catch(\JsonClient\JsonException $e){
-                if($app->request()->getResourceUri() != '/login' && $e->getType() == "Payutc\Exception\CheckRightException"){
-                    $app->getLog()->debug("Caught CheckRightException (".$e->getMessage()."), redirect to login route");
-                    $app->response()->redirect($app->urlFor('login'));
-                }
+        try {
+            // Run inner middleware and application
+            $this->next->call();
+        }
+        catch(\JsonClient\JsonException $e){
+            if($app->request()->getResourceUri() != '/login' && $e->getType() == "Payutc\Exception\CheckRightException"){
+                $app->getLog()->debug("Caught CheckRightException (".$e->getMessage()."), redirect to login route");
+                $app->response()->redirect($app->urlFor('login'));
             }
         }
     }
