@@ -32,14 +32,14 @@ class JsonClientMiddleware extends \Slim\Middleware
 
             // Connect the application if required
             if(empty($status->application)){
-                $app->getLog()->debug("No app logged in, calling loginApp");
+                $app->getLog()->debug("No app logged in for WEBSALECONFIRM, calling loginApp");
         
                 try {
                     JsonClientFactory::getInstance()->getClient("WEBSALECONFIRM")->loginApp(array(
                         "key" => Config::get("application_key")
                     ));
                 } catch (\JsonClient\JsonException $e) {
-                    $app->getLog()->error("Application login error: ".$e->getMessage());
+                    $app->getLog()->error("Application login error for WEBSALECONFIRM: ".$e->getMessage());
                     throw $e;
                 }
             }
