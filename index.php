@@ -190,7 +190,7 @@ $app->post('/register', function() use ($app) {
 // --- Websale confirmation gateway
 
 // Initial access
-$app->get('/websale', function() use ($app) {
+$app->get('/validation', function() use ($app) {
     // If no transaction data, go home
     if(empty($_GET['tra_id']) || empty($_GET['token'])){
         $app->getLog()->error("No transaction data recieved");
@@ -273,7 +273,7 @@ $app->get('/websale', function() use ($app) {
 });
 
 // Initial access
-$app->post('/websale', function() use ($app) {
+$app->post('/validation', function() use ($app) {
     // If no transaction data, go home
     if(empty($_POST['tra_id']) || empty($_POST['token']) || empty($_POST['method'])){
         $app->getLog()->error("No transaction data recieved");

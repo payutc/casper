@@ -19,7 +19,7 @@ class JsonClientMiddleware extends \Slim\Middleware
         $env = $app->environment();
         
         // If we are in websale gateway
-        if (strpos($app->request()->getPathInfo(), '/websale') === 0) {
+        if (strpos($app->request()->getPathInfo(), '/validation') === 0) {
             // Consider us as logged in if we already have a cookie
             $env["loggedin"] = JsonClientFactory::getInstance()->getCookie() ? true : false;
     

@@ -26,7 +26,7 @@
             
             <p>Voici les opérations sur ton compte payutc :</p>
             
-            <form action="websale" method="post">
+            <form action="validation" method="post">
                 <input type="hidden" name="tra_id" value="<?php echo $_GET['tra_id'] ?>" />
                 <input type="hidden" name="token" value="<?php echo $_GET['token'] ?>" />
                 <input type="hidden" name="method" value="payutc" />
