@@ -12,10 +12,5 @@
         <script src="js/bootstrap.min.js"></script>
         <script src="js/virement.js"></script>
         <script src="js/historique.js"></script>
-        <script type="text/javascript">
-        init();
-        selectPage(1);
-        $("a").tooltip();
-        </script>
     </body>
 </html>

@@ -134,3 +134,10 @@
         <div class="pagination pagination-centered"><ul id="paging"></ul></div>
     </div>
 </div>
+<script type="text/javascript">
+$(document).ready(function(){
+    init();
+    selectPage(1);
+    $("a").tooltip();
+});
+</script>
