@@ -17,6 +17,11 @@ class JsonClientMiddleware extends \Slim\Middleware
         // Get reference to application
         $app = $this->app;
         
+        if (strpos($app->request()->getPathInfo(), '/websale') === 0 && !JsonClientFactory::getInstance()->getCookie()) {
+            $this->next->call();
+            return;
+        }
+        
         // If we have no cookie, redirect to login
         if($app->request()->getResourceUri() != '/login' && !JsonClientFactory::getInstance()->getCookie()) {
             $app->getLog()->debug("No cookie, redirecting to login");

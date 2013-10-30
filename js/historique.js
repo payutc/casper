@@ -95,3 +95,37 @@ var n = this,
     j = (j = i.length) > 3 ? j % 3 : 0;
    return s + " " + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "") + " €";
  };
+
+$(document).ready(function(){
+  $("#reloadLine").popover();
+
+  $("#montant").change(function(){
+    if($(this).val() > 0){
+      $("#submitBut").val("Recharger et payer");
+    }
+    else {
+      $("#submitBut").val("Payer");
+    }
+    var finalAmount = parseFloat($("#final").val()) + parseFloat($(this).val());
+  
+    $("#finalAmount").html(finalAmount.formatMoney());
+  });
+
+  $("#boutons2").hide();
+  
+  $("#noaccount").click(function(e){
+    e.preventDefault();
+    $("#gopay").attr("disabled", "disabled");
+    $("#boutons1").hide();
+    $("#boutons2").show();
+  });
+  
+  $("#cgu").change(function(){
+    if($(this).is(":checked")){
+      $("#gopay").removeAttr("disabled");
+    }
+    else {
+      $("#gopay").attr("disabled", "disabled");
+    }
+  });
+});

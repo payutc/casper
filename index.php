@@ -187,6 +187,187 @@ $app->post('/register', function() use ($app) {
     }
 });
 
+// --- Websale confirmation gateway
+
+// Initial access
+$app->get('/websale', function() use ($app) {
+    // If no transaction data, go home
+    if(empty($_GET['tra_id']) || empty($_GET['token'])){
+        $app->getLog()->error("No transaction data recieved");
+        $app->redirect($app->urlFor('home'));
+    }
+    
+    // Consider us as logged in if we already have a cookie
+    $loggedin = JsonClientFactory::getInstance()->getCookie() ? true : false;
+    
+    // Create the client for WEBSALECONFIRM
+    $app->getLog()->debug("Creating json_client for service WEBSALECONFIRM");
+    JsonClientFactory::getInstance()->createClient("WEBSALECONFIRM");
+    
+    // Get user and app status
+    $status = JsonClientFactory::getInstance()->getClient("WEBSALECONFIRM")->getStatus();
+
+    // Connect the application if required
+    if(empty($status->application)){
+        $app->getLog()->debug("No app logged in, calling loginApp");
+        
+        try {
+            JsonClientFactory::getInstance()->getClient("WEBSALECONFIRM")->loginApp(array(
+                "key" => Config::get("application_key")
+            ));
+        } catch (\JsonClient\JsonException $e) {
+            $app->getLog()->error("Application login error: ".$e->getMessage());
+            throw $e;
+        }
+    }
+
+    // If no user loaded, consider our cookie us as not logged in
+    if(empty($status->user)){
+        $loggedin = false;
+	}
+    
+    // Get data the transaction data
+    try {
+        $transactionData = JsonClientFactory::getInstance()->getClient("WEBSALECONFIRM")->getTransactionInfo(array(
+            'tra_id' => $_GET['tra_id'],
+            'token' => $_GET['token']
+        ));
+        
+        // If this transaction is not waiting
+        if($transactionData->status != 'W'){
+            throw new \Exception("Cette transaction n'est pas en attente.");
+        }
+    }
+    catch(\Exception $e){
+        $app->getLog()->error("Cannot get transaction ".$_GET['tra_id']." with token ".$_GET['token'].": ".$e->getMessage());
+        
+        $app->render('header.php', array("title" => Config::get("title", "payutc"), "loggedin" => false));
+        $app->render('error.php', array('login_erreur' => "Impossible de récupérer la transaction"));
+        $app->render('footer.php');
+        $app->stop();
+    }
+    
+    $app->render('header.php', array(
+        "title" => Config::get("title"),
+        "loggedin" => $loggedin
+    ));
+    
+    $products = array();
+    foreach($transactionData->products as $product) {
+        $products[$product->id] = $product;
+    }
+    
+    if($loggedin){
+        $account = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->historique();
+        
+        $canReload = true;
+        try {
+            $reloadInfo = JsonClientFactory::getInstance()->getClient("RELOAD")->info();
+            $maxReload = $reloadInfo->max_reload;
+            $minReload = $reloadInfo->min;
+        }
+        catch(\JsonClient\JsonException $e){
+            $canReload = false;
+            $cannotReloadMessage = $e->getMessage();
+        }
+        
+        $app->render('websale_payutc.php', array(
+            "purchases" => $transactionData->purchases,
+            "products" => $products,
+            "total" => $transactionData->total,
+            "solde" => $account->credit,
+            "maxReload" => $maxReload,
+            "minReload" => $minReload,
+            "canReload" => $canReload
+        ));        
+    }
+    else {
+        // URL where user will go after login
+        $_SESSION['login_redirect'] = "websale?tra_id=".$_GET['tra_id']."&token=".$_GET['token'];
+        
+        $app->render('websale.php', array(
+            "purchases" => $transactionData->purchases,
+            "products" => $products,
+            "total" => $transactionData->total
+        ));
+    }
+
+    $app->render('footer.php');
+});
+
+// Initial access
+$app->post('/websale', function() use ($app) {
+    // If no transaction data, go home
+    if(empty($_POST['tra_id']) || empty($_POST['token']) || empty($_POST['method'])){
+        $app->getLog()->error("No transaction data recieved");
+        $app->redirect($app->urlFor('home'));
+    }
+    
+    // Consider us as logged in if we already have a cookie
+    $loggedin = JsonClientFactory::getInstance()->getCookie() ? true : false;
+    
+    // Create the client for WEBSALECONFIRM
+    $app->getLog()->debug("Creating json_client for service WEBSALECONFIRM");
+    JsonClientFactory::getInstance()->createClient("WEBSALECONFIRM");
+    
+    // Get user and app status
+    $status = JsonClientFactory::getInstance()->getClient("WEBSALECONFIRM")->getStatus();
+
+    // Connect the application if required
+    if(empty($status->application)){
+        $app->getLog()->debug("No app logged in, calling loginApp");
+        
+        try {
+            JsonClientFactory::getInstance()->getClient("WEBSALECONFIRM")->loginApp(array(
+                "key" => Config::get("application_key")
+            ));
+        } catch (\JsonClient\JsonException $e) {
+            $app->getLog()->error("Application login error: ".$e->getMessage());
+            throw $e;
+        }
+    }
+
+    // If no user loaded, consider our cookie us as not logged in
+    if(empty($status->user)){
+        $loggedin = false;
+	}
+    
+    // Get data the transaction data
+    try {
+        if($_POST['method'] == "direct"){
+            if(empty($_POST['cgu'])){
+                throw new \Exception("Vous devez accepter les CGU de payutc pour continuer");
+            }
+            
+            $nextUrl = JsonClientFactory::getInstance()->getClient("WEBSALECONFIRM")->doTransaction(array(
+                'tra_id' => $_POST['tra_id'],
+                'token' => $_POST['token'],
+                'montant_reload' => 0
+            ));
+        }
+        else if($_POST['method'] == "payutc" && $loggedin){
+            $nextUrl = JsonClientFactory::getInstance()->getClient("WEBSALECONFIRM")->doTransaction(array(
+                'tra_id' => $_POST['tra_id'],
+                'token' => $_POST['token'],
+                'montant_reload' => parse_user_amount($_POST['montant'])
+            ));
+        }
+        else {
+            throw new \Exception("Méthode de paiement non reconnue");
+        }
+    }
+    catch(\Exception $e){
+        $app->getLog()->error("Cannot do transaction ".$_POST['tra_id']." with token ".$_POST['token'].": ".$e->getMessage());
+        
+        $app->render('header.php', array("title" => Config::get("title", "payutc"), "loggedin" => false));
+        $app->render('error.php', array('login_erreur' => "Impossible de valider la transaction"));
+        $app->render('footer.php');
+        $app->stop();
+    }
+    
+    $app->redirect($nextUrl);
+});
+
 // --- CAS
 $app->get('/login', function() use ($app) {
     // Si pas de ticket, c'est une invitation à se connecter
