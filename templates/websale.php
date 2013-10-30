@@ -5,7 +5,7 @@
         <?php endif ?>
             <h1>Bienvenue</h1>
 
-            <p>Tu vas réaliser un paiement à <em>Etuville</em> via payutc.</p> 
+            <p>Tu vas réaliser un paiement à <em><?php echo $fundation ?></em> via payutc.</p> 
             
             <form action="websale" method="post">
                 <input type="hidden" name="tra_id" value="<?php echo $_GET['tra_id'] ?>" />

@@ -259,6 +259,7 @@ $app->get('/websale', function() use ($app) {
     
     if($loggedin){
         $account = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->historique();
+        $env = $app->environment();
         
         $canReload = true;
         try {
@@ -278,8 +279,10 @@ $app->get('/websale', function() use ($app) {
             "solde" => $account->credit,
             "maxReload" => $maxReload,
             "minReload" => $minReload,
-            "canReload" => $canReload
-        ));        
+            "canReload" => $canReload,
+            "fundation" => $transactionData->fun_name,
+            "firstname" => $env['user_data']->firstname
+        ));
     }
     else {
         // URL where user will go after login
@@ -288,7 +291,8 @@ $app->get('/websale', function() use ($app) {
         $app->render('websale.php', array(
             "purchases" => $transactionData->purchases,
             "products" => $products,
-            "total" => $transactionData->total
+            "total" => $transactionData->total,
+            "fundation" => $transactionData->fun_name
         ));
     }
 

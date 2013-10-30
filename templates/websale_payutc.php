@@ -3,15 +3,15 @@
         <?php if(isset($flash['websale_error'])): ?>
             <div class="alert alert-error"><?php echo $flash['websale_error'] ?></div>
         <?php endif ?>
-            <h1>Bonjour Arthur</h1>
+            <h1>Bonjour <?php echo $firstname ?></h1>
 
-            <p>Tu vas réaliser un paiement à <em>Etuville</em> via payutc.</p> 
+            <p>Tu vas réaliser un paiement à <em><?php echo $fundation ?></em> via payutc.</p> 
             
             <table class="table table-hover" id="opTable">
                 <tbody>
                     <?php foreach($purchases as $purchase): ?>
                     <tr>
-                        <td><?php echo $purchase->pur_qte ?> truc à <?php echo format_amount($purchase->pur_unit_price) ?> €</td>
+                        <td><?php echo $purchase->pur_qte ?> <?php echo $products[$purchase->obj_id]->name ?> à <?php echo format_amount($purchase->pur_unit_price) ?> €</td>
                         <td class="debit"> - <?php echo format_amount($purchase->pur_price) ?> €</td>
                     </tr>
                     <?php endforeach ?>
