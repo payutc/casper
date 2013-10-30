@@ -190,12 +190,15 @@ $app->post('/register', function() use ($app) {
 // --- Websale confirmation gateway
 
 // Initial access
-$app->get('/websale', function() use ($app, $env) {
+$app->get('/websale', function() use ($app) {
     // If no transaction data, go home
     if(empty($_GET['tra_id']) || empty($_GET['token'])){
         $app->getLog()->error("No transaction data recieved");
         $app->redirect($app->urlFor('home'));
     }
+    
+    // Get environment
+    $env = $app->environment();
     
     // Get data the transaction data
     try {
@@ -276,7 +279,10 @@ $app->post('/websale', function() use ($app) {
         $app->getLog()->error("No transaction data recieved");
         $app->redirect($app->urlFor('home'));
     }
-        
+
+    // Get environment
+    $env = $app->environment();
+    
     // Get data the transaction data
     try {
         if($_POST['method'] == "direct"){
