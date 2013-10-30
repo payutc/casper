@@ -28,9 +28,9 @@
                     </tbody>
                 </table>
 
-                <div id="boutons1">
-                    <p class="center"><a href="login" class="btn btn-primary" title="Connexion à payutc" />J'ai un compte payutc</a></p>
-                    <p class="center"><a href="#" class="btn btn-primary" title="Je n'ai pas de compte payutc" id="noaccount"/>Je n'ai pas de compte payutc</a></p>
+                <div id="boutons1" class="center">
+                    <p><a href="login" class="btn btn-primary" title="Connexion à payutc" />J'ai un compte payutc</a></p>
+                    <p><a href="#" class="btn btn-primary" title="Je n'ai pas de compte payutc" id="noaccount"/>Je n'ai pas de compte payutc</a></p>
                 </div>
                 <div id="boutons2">
                     <p>
