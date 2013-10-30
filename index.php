@@ -35,7 +35,8 @@ function parse_user_amount($val) {
 // Page principale
 $app->get('/', function() use($app) {
     $app->render('header.php', array(
-        "title" => Config::get("title")
+        "title" => Config::get("title"),
+        "loggedin" => true
     ));
     
     // The array that will be sent to the template
@@ -159,7 +160,8 @@ $app->post('/virement', function() use ($app) {
 // Affichage de la charte
 $app->get('/register', function() use ($app) {
     $app->render('header.php', array(
-        "title" => Config::get("title")
+        "title" => Config::get("title"),
+        "loggedin" => true
     ));
 
     $app->render('register.php');

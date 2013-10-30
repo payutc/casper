@@ -22,7 +22,9 @@
         <div class="container">
           <a class="brand" href=""><?php echo $title ?></a>
           <div>
+            <?php if($loggedin): ?>
             <p class="navbar-text pull-right"><a href="logout">déconnexion</a></p>
+            <?php endif ?>
           </div>
         </div>
       </div>
