@@ -35,8 +35,8 @@
                 <table class="table table-hover" id="opTable">
                     <tbody>
                         <tr>
-                            <td>Mon solde actuel</td>
-                            <td class="credit"> + <?php echo format_amount($solde) ?> €</td>
+                            <td>Solde actuel</td>
+                            <td class="credit">+ <?php echo format_amount($solde) ?> €</td>
                         </tr>
                         <tr>
                             <td>
@@ -44,12 +44,28 @@
                             </td>
                             <td class="debit">- <?php echo format_amount($total) ?> €</td>
                         </tr>
-                        <tr id="reloadLine" data-placement="right" data-content="<?php echo ($total-$solde > 0) ? 'Pour régler cet achat, tu dois d\'abord  recharger de '.format_amount($total-$solde).' €. Tu peux augmenter ce montant pour garder du crédit sur ton compte.' : 'Tu peux recharger ton compte payutc pour ne pas avoir un solde trop bas' ?>"  data-original-title="Rechargement payutc" data-trigger="hover">
+                        <?php
+                        $minChamp = $minReload;
+                        if($total > $solde && $total-$solde > $minReload){
+                            $minChamp = $total-$solde;
+                        }
+                        ?>
+                        <tr id="reloadLine" data-placement="right" data-content="<?php echo ($total-$solde > 0) ? 'Pour régler cet achat, tu dois d\'abord  recharger de '.format_amount($minChamp).' €. Tu peux augmenter ce montant pour garder du crédit sur ton compte.' : 'Tu peux recharger ton compte payutc au cours de cette opération' ?>"  data-original-title="Rechargement payutc" data-trigger="hover">
                             <?php if($canReload): ?>
-                            <td>Rechargement</td>
+                            <td>
+                                <?php if($solde >= $total): ?>
+                                <label class="checkbox">
+                                    <input type="checkbox" name="reload" id="reload" />
+                                    Rechargement
+                                </label>
+                                <?php else: ?>
+                                    Rechargement
+                                <?php endif ?>
+                            </td>
                             <td style="text-align:right">
                                 <div class="input-append">
-                                    <input id="montant" name="montant" type="number" placeholder="0,00" class="span1" min="<?php echo ($total-$solde > 0) ? ($total-$solde)/100 : $minReload/100 ?>" max="<?php echo ($maxReload-$total)/100 ?>" value="<?php echo ($total-$solde > 0) ? ($total-$solde)/100 : 0 ?>" step="0.01" />
+
+                                    <input id="montant" name="montant" type="number" placeholder="0,00" class="span1" min="<?php echo $minChamp/100 ?>" max="<?php echo ($maxReload-$total)/100 ?>" value="<?php echo ($total > $solde) ? $minChamp/100 : 0 ?>" step="0.01"<?php echo ($total > $solde) ? '' : ' disabled="disabled"' ?> />
                                     <span class="add-on">€</span>
                                 </div>
                             </td>
@@ -57,7 +73,7 @@
                         <?php endif ?>
                         <tr>
                             <td>Solde final</td>
-                            <td class="credit" id="finalAmount"><?php echo ($solde-$total > 0) ? format_amount($solde-$total) : format_amount(0) ?> €</td>
+                            <td class="credit" id="finalAmount"><?php echo ($total > $solde) ? format_amount($solde+$minChamp-$total) : format_amount($solde-$total) ?> €</td>
                         </tr>
                     </tbody>
                 </table>

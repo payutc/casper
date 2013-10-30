@@ -96,20 +96,22 @@ var n = this,
    return s + " " + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "") + " €";
  };
 
+function updateCalcul(){
+  if($("#montant").val() > 0){
+    $("#submitBut").val("Recharger et payer");
+  }
+  else {
+    $("#submitBut").val("Payer");
+  }
+  var finalAmount = parseFloat($("#final").val()) + parseFloat($("#montant").val());
+
+  $("#finalAmount").html(finalAmount.formatMoney());
+}
+
 $(document).ready(function(){
   $("#reloadLine").popover();
 
-  $("#montant").change(function(){
-    if($(this).val() > 0){
-      $("#submitBut").val("Recharger et payer");
-    }
-    else {
-      $("#submitBut").val("Payer");
-    }
-    var finalAmount = parseFloat($("#final").val()) + parseFloat($(this).val());
-  
-    $("#finalAmount").html(finalAmount.formatMoney());
-  });
+  $("#montant").change(updateCalcul);
 
   $("#boutons2").hide();
   
@@ -127,5 +129,15 @@ $(document).ready(function(){
     else {
       $("#gopay").attr("disabled", "disabled");
     }
+  });
+  
+  $("#reload").change(function(){
+    if($(this).is(":checked")){
+      $("#montant").removeAttr("disabled").val(10.00);
+    }
+    else {
+      $("#montant").attr("disabled", "disabled").val(0);
+    }
+    updateCalcul();
   });
 });
