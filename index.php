@@ -297,10 +297,11 @@ $app->post('/validation', function() use ($app) {
             ));
         }
         else if($_POST['method'] == "payutc" && $env["loggedin"]){
+            $montant = !empty($_POST['montant']) ? parse_user_amount($_POST['montant']) : 0;
             $nextUrl = JsonClientFactory::getInstance()->getClient("WEBSALECONFIRM")->doTransaction(array(
                 'tra_id' => $_POST['tra_id'],
                 'token' => $_POST['token'],
-                'montant_reload' => parse_user_amount($_POST['montant'])
+                'montant_reload' => $montant
             ));
         }
         else {
