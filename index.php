@@ -229,7 +229,13 @@ $app->get('/login', function() use ($app) {
         JsonClientFactory::getInstance()->setCookie(JsonClientFactory::getInstance()->getClient("MYACCOUNT")->cookie);
             
         // Go vers la page d'accueil
-        $app->redirect($app->urlFor('home'));
+        if(!empty($_SESSION['login_redirect'])){
+            $app->redirect($_SESSION['login_redirect']);
+            unset($_SESSION['login_redirect']);
+        }
+        else {
+            $app->redirect($app->urlFor('home'));
+        }
     }
 })->name('login');
 
