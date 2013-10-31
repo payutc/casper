@@ -12,8 +12,7 @@
 
     <script src="js/jquery-1.9.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script src="js/virement.js"></script>
-    <script src="js/historique.js"></script>
+    <script src="js/casper.js"></script>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
