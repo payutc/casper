@@ -274,7 +274,7 @@ $app->get('/validation', function() use ($app) {
     $app->render('footer.php');
 });
 
-// Initial access
+// Submit of payment form
 $app->post('/validation', function() use ($app) {
     // If no transaction data, go home
     if(empty($_POST['tra_id']) || empty($_POST['token']) || empty($_POST['method'])){
@@ -315,6 +315,32 @@ $app->post('/validation', function() use ($app) {
         
         $app->render('header.php', array("title" => Config::get("title", "payutc"), "loggedin" => false));
         $app->render('error.php', array('login_erreur' => "Impossible de valider la transaction"));
+        $app->render('footer.php');
+        $app->stop();
+    }
+    
+    $app->redirect($nextUrl);
+});
+
+// Return from payline
+$app->get('/validationReturn', function() use ($app) {
+    // Get data the transaction data
+    try {
+        // If no token, fail
+        if(empty($_GET['token'])){
+            $app->getLog()->error("No token recieved");
+            throw new \Exception("No token received");
+        }
+        
+        $nextUrl = JsonClientFactory::getInstance()->getClient("WEBSALECONFIRM")->notificationPayline(array(
+            'token_payline' => $_GET['token']
+        ));
+    }
+    catch(\Exception $e){
+        $app->getLog()->error("Cannot do notification with token ".$_GET['token'].": ".$e->getMessage());
+        
+        $app->render('header.php', array("title" => Config::get("title", "payutc"), "loggedin" => false));
+        $app->render('error.php', array('login_erreur' => "Impossible de notifier la transaction"));
         $app->render('footer.php');
         $app->stop();
     }
