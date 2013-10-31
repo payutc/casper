@@ -260,14 +260,13 @@ $app->get('/validation', function() use ($app) {
         ));
     }
     else {
-        // URL where user will go after login
-        $_SESSION['login_redirect'] = "validation?tra_id=".$_GET['tra_id']."&token=".$_GET['token'];
-        
         $app->render('websale.php', array(
             "purchases" => $transactionData->purchases,
             "products" => $products,
             "total" => $transactionData->total,
-            "fundation" => $transactionData->fun_name
+            "fundation" => $transactionData->fun_name,
+            "tra_id" => $_GET['tra_id'],
+            "token" => $_GET['token']
         ));
     }
 
@@ -356,6 +355,13 @@ $app->get('/login', function() use ($app) {
         // On jette les cookies actuels
         JsonClientFactory::getInstance()->destroyCookie();
         
+        // If we have transaction parameters, save them
+        if(!empty($_GET['tra_id']) && !empty($_GET['token'])){
+            $app->getLog()->debug("Setting login redirect URL to validation");
+            
+            $_SESSION['login_redirect'] = "validation?tra_id=".$_GET['tra_id']."&token=".$_GET['token'];
+        }
+        
         // Redirection vers le CAS
         $app->redirect(JsonClientFactory::getInstance()->getClient("MYACCOUNT")->getCasUrl()."/login?service=".Config::get("casper_url").'login');
     } else {
@@ -391,8 +397,12 @@ $app->get('/login', function() use ($app) {
             
         // Go vers la page d'accueil
         if(!empty($_SESSION['login_redirect'])){
-            $app->redirect($_SESSION['login_redirect']);
+            $url = $_SESSION['login_redirect'];
             unset($_SESSION['login_redirect']);
+            
+            $app->getLog()->debug("Redirect after login: $url");
+            
+            $app->redirect($url);
         }
         else {
             $app->redirect($app->urlFor('home'));
