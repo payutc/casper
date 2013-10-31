@@ -10,6 +10,10 @@
     <link href="css/main.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
 
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/casper.js"></script>
+
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -22,7 +26,9 @@
         <div class="container">
           <a class="brand" href=""><?php echo $title ?></a>
           <div>
+            <?php if($loggedin): ?>
             <p class="navbar-text pull-right"><a href="logout">déconnexion</a></p>
+            <?php endif ?>
           </div>
         </div>
       </div>

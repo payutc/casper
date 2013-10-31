@@ -97,15 +97,15 @@
                         <td>
                             <?php echo $elt->name ?> <small><?php echo $elt->fun ?></small>
                         </td>
-                        <td>
-                            <span class="label label-important"> <i class="icon-minus icon-white"></i> <?php echo format_amount($elt->amount) ?> €</span>
+                        <td class="debit">
+                            - <?php echo format_amount($elt->amount) ?> €
                         </td>
                     <?php elseif($elt->type == "RECHARGE"): ?>
                         <td>
                             Rechargement
                         </td>
-                        <td>
-                            <span class="label label-success"> <i class="icon-plus icon-white"></i> <?php echo format_amount($elt->amount) ?> €</span>
+                        <td class="credit">
+                             + <?php echo format_amount($elt->amount) ?> €
                         </td>
                     <?php elseif($elt->type == "VIRIN"): ?>
                         <td>
@@ -114,8 +114,8 @@
                                  (<?php echo $elt->name ?>)
                              <?php endif ?>
                         </td>
-                        <td>
-                            <span class="label label-success"> <i class="icon-plus icon-white"></i> <?php echo format_amount($elt->amount)?> €</span>
+                        <td class="credit">
+                            + <?php echo format_amount($elt->amount)?> €
                         </td>
                     <?php elseif($elt->type == "VIROUT"): ?>
                         <td>
@@ -124,8 +124,8 @@
                                  (<?php echo $elt->name ?>)
                              <?php endif ?>
                          </td>
-                        <td>
-                            <span class="label label-important"> <i class="icon-minus icon-white"></i> <?php echo format_amount($elt->amount)?> €</span>
+                        <td class="debit">
+                            - <?php echo format_amount($elt->amount)?> €
                         </td>
                     <?php endif ?>
                 </tr>
@@ -134,3 +134,10 @@
         <div class="pagination pagination-centered"><ul id="paging"></ul></div>
     </div>
 </div>
+<script type="text/javascript">
+$(document).ready(function(){
+    init();
+    selectPage(1);
+    $("a").tooltip();
+});
+</script>
