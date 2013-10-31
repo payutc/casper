@@ -235,6 +235,8 @@ $app->get('/validation', function() use ($app) {
         $account = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->historique();
         
         $canReload = true;
+        $maxReload = 10000-$account->credit;
+        $minReload = 1000;
         try {
             $reloadInfo = JsonClientFactory::getInstance()->getClient("RELOAD")->info();
             $maxReload = $reloadInfo->max_reload;
