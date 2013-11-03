@@ -70,16 +70,29 @@
                                     <span class="add-on">€</span>
                                 </div>
                             </td>
+                            <?php else: ?>
+                            <td colspan="2">
+                                Rechargement
+                                <div class="alert alert-error">
+                                    <?php echo $cannotReloadMessage ?><br />
+                                </div>
+                            </td>
+                            <?php endif ?>
                         </tr>
-                        <?php endif ?>
                         <tr>
                             <td>Solde final</td>
                             <td class="credit" id="finalAmount"><?php echo ($total > $solde) ? format_amount($solde+$minChamp-$total) : format_amount($solde-$total) ?> €</td>
                         </tr>
                     </tbody>
                 </table>
-               
+                <?php if($solde >= $total || $canReload): ?>
                 <input type="submit" class="btn btn-primary" value="<?php echo ($total-$solde > 0) ? 'Recharger et payer' : 'Payer' ?>" id="submitBut"/>
+                <?php else: ?>
+                    <div class="alert alert-error">
+                        Tu ne peux pas terminer cette transaction car ton solde est trop faible et tu ne peux pas recharger.
+                    </div>
+                    <a class="btn btn-primary" href="<?php echo $logoutUrl ?>" title="Paiement transaction">Se déconnecter et choisir un autre moyen de paiement</a>
+                <?php endif ?>
             </form> 
       </div>
 </div>

@@ -255,8 +255,10 @@ $app->get('/validation', function() use ($app) {
             "maxReload" => $maxReload,
             "minReload" => $minReload,
             "canReload" => $canReload,
+            "cannotReloadMessage" => $cannotReloadMessage,
             "fundation" => $transactionData->fun_name,
-            "firstname" => $env['user_data']->firstname
+            "firstname" => $env['user_data']->firstname,
+            "logoutUrl" => $app->urlFor('logout')."?tra_id=".$_GET['tra_id']."&token=".$_GET['token']
         ));
     }
     else {
@@ -310,7 +312,7 @@ $app->post('/validation', function() use ($app) {
         }
     }
     catch(\Exception $e){
-        $app->getLog()->error("Cannot do transaction ".$_POST['tra_id']." with token ".$_POST['token'].": ".$e->getMessage());
+        $app->getLog()->error("Cannot do transaction ".$_POST['tra_id']." with token ".$_POST['token'].": ".$e->getType(). " -  ".$e->getMessage());
         
         $app->render('header.php', array("title" => Config::get("title", "payutc"), "loggedin" => false));
         $app->render('error.php', array('login_erreur' => "Impossible de valider la transaction"));
@@ -422,8 +424,17 @@ $app->get('/logout', function() use ($app) {
     // Throw our cookies away
     JsonClientFactory::getInstance()->destroyCookie();
     
+    $logoutUrl = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->getCasUrl()."/logout";
+    
+    // If we have transaction parameters, save them
+    if(!empty($_GET['tra_id']) && !empty($_GET['token'])){
+        $app->getLog()->debug("Setting logout redirect URL to validation");
+        
+        $logoutUrl .= "?url=".urlencode(Config::get("casper_url")."validation?tra_id=".$_GET['tra_id']."&token=".$_GET['token']);
+    }
+    
     // Logout from CAS
-    $app->redirect(JsonClientFactory::getInstance()->getClient("MYACCOUNT")->getCasUrl()."/logout?service=".Config::get("casper_url").'login');
+    $app->redirect($logoutUrl);
 })->name('logout');
 
 $app->run();
