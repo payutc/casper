@@ -388,7 +388,7 @@ $app->get('/login', function() use ($app) {
             $app->getLog()->warn("Error with CAS ticket ".$_GET["ticket"].": ".$e->getMessage());
             
             // Affichage d'une page avec juste l'erreur
-            $app->render('header.php', array("title" => Config::get("title", "payutc")));
+            $app->render('header.php', array("title" => Config::get("title", "payutc"), "loggedin"=>false));
             $app->render('error.php', array('login_erreur' => 'Erreur de login CAS<br /><a href="'.$app->urlFor('login').'">Réessayer</a>'));
             $app->render('footer.php');
             $app->stop();
