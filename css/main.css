@@ -36,3 +36,7 @@ body {
 .center {
   text-align: center;
 }
+
+.navbar .brand {
+  padding: 5px 20px 5px;
+}
