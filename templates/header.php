@@ -24,7 +24,7 @@
     <div class="navbar navbar-fixed-top navbar-inverse">
       <div class="navbar-inner">
         <div class="container">
-          <a class="brand" href=""><?php echo $title ?></a>
+          <a class="brand" href=""><img src="img/payutc_rect_110.png" alt="<?php echo $title ?>"></a>
           <div>
             <?php if($loggedin): ?>
             <p class="navbar-text pull-right"><a href="logout">déconnexion</a></p>
