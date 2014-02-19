@@ -51,7 +51,7 @@ class JsonClientMiddleware extends \Slim\Middleware
         }
         
         // If not in websale or in websale with a logged in user
-        if (strpos($app->request()->getPathInfo(), '/validation') !== 0 || $env["loggedin"]) {
+        if ($app->request()->getResourceUri() != '/cgu' && (strpos($app->request()->getPathInfo(), '/validation') !== 0 || $env["loggedin"])) {
             // If we have no cookie, redirect to login
             if($app->request()->getResourceUri() != '/login' && !JsonClientFactory::getInstance()->getCookie()) {
                 $app->getLog()->debug("No cookie, redirecting to login");

@@ -164,7 +164,7 @@ $app->get('/register', function() use ($app) {
         "loggedin" => true
     ));
 
-    $app->render('register.php');
+    $app->render('register.php', array("form" => true));
 
     $app->render('footer.php');
 })->name('register');
@@ -437,5 +437,17 @@ $app->get('/logout', function() use ($app) {
     // Logout from CAS
     $app->redirect($logoutUrl);
 })->name('logout');
+
+// Affichage de la charte (Pour le lien CGU du paiement en ligne)
+$app->get('/cgu', function() use ($app) {
+    $app->render('header.php', array(
+        "title" => Config::get("title"),
+        "loggedin" => false
+    ));
+
+    $app->render('register.php', array("form" => false));
+
+    $app->render('footer.php');
+})->name('cgu');
 
 $app->run();
