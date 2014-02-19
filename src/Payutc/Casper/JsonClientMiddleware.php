@@ -51,7 +51,7 @@ class JsonClientMiddleware extends \Slim\Middleware
         }
         
         // If not in websale or in websale with a logged in user
-        if (strpos($app->request()->getPathInfo(), '/validation') !== 0 || $env["loggedin"]) {
+        if ($app->request()->getResourceUri() != '/cgu' && (strpos($app->request()->getPathInfo(), '/validation') !== 0 || $env["loggedin"])) {
             // If we have no cookie, redirect to login
             if($app->request()->getResourceUri() != '/login' && !JsonClientFactory::getInstance()->getCookie()) {
                 $app->getLog()->debug("No cookie, redirecting to login");
@@ -82,7 +82,7 @@ class JsonClientMiddleware extends \Slim\Middleware
             }
     
             // If no user loaded, go to cas
-            if($app->request()->getResourceUri() != '/login' && $app->request()->getResourceUri() != '/register' && $app->request()->getResourceUri() != '/cgu' && empty($status->user)){
+            if($app->request()->getResourceUri() != '/login' && $app->request()->getResourceUri() != '/register' && empty($status->user)){
                 $app->getLog()->debug("No user logged in, redirect to login route");
                 $app->response()->redirect($app->urlFor('login'));
         	}
@@ -96,7 +96,7 @@ class JsonClientMiddleware extends \Slim\Middleware
             $this->next->call();
         }
         catch(\JsonClient\JsonException $e){
-            if($app->request()->getResourceUri() != '/login' && $app->request()->getResourceUri() != '/cgu' && $e->getType() == "Payutc\Exception\CheckRightException"){
+            if($app->request()->getResourceUri() != '/login' && $e->getType() == "Payutc\Exception\CheckRightException"){
                 $app->getLog()->debug("Caught CheckRightException (".$e->getMessage()."), redirect to login route");
                 $app->response()->redirect($app->urlFor('login'));
             }

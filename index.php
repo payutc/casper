@@ -164,7 +164,7 @@ $app->get('/register', function() use ($app) {
         "loggedin" => true
     ));
 
-    $app->render('register.php');
+    $app->render('register.php', array("form" => true));
 
     $app->render('footer.php');
 })->name('register');

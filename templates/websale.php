@@ -35,7 +35,7 @@
                 <div id="boutons2">
                     <p>
                         <label class="checkbox">
-                            <input type="checkbox" name="cgu" id="cgu"> J'accepte les CGU de payutc
+                            <input type="checkbox" name="cgu" id="cgu"> J'accepte les <a href="cgu" target="_blank" >CGU</a> de payutc
                         </label>
                     </p>
                     <p><input type="submit" class="btn btn-primary" value="Payer par CB" id="gopay" /></p>
