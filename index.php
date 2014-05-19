@@ -145,7 +145,7 @@ $app->post('/virement', function() use ($app) {
             "message" => $_POST['message']
         ));
         
-        $app->flash('virement_ok', 'Le virement de '.format_amount($montant).' € à réussi.');
+        $app->flash('virement_ok', 'Le virement de '.format_amount($montant).' € a réussi.');
     }
     catch(\JsonClient\JsonException $e){
         $app->flash('virement_erreur', $e->getMessage());
