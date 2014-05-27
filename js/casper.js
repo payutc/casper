@@ -144,54 +144,29 @@ $(document).ready(function(){
   
   // --- Virement
   $('#userName').typeahead({
-      hint: true,
-      highlight: true,
-      minLength: 1
-    },
-    {
-      name: 'userName',
-      displayKey: 'value',
       source: function(input, process){
-        $('#userId').val("");
-        return $.get('ajax', 'q='+input, function(data) {
-            map = {};
-            usernames = [];
-      
-            $.each(JSON.parse(data), function (i, user) {
-                map[user.name] = user;
-                usernames.push(user.name);
-            });
-            console.log(usernames);
-            return process(usernames);
-        });
+          $('#userId').val("");
+          $.get('ajax', 'q='+input, function(data) {
+              map = {};
+              usernames = [];
+        
+              $.each(JSON.parse(data), function (i, user) {
+                  map[user.name] = user;
+                  usernames.push(user.name);
+              });
+        
+              process(usernames);
+          });
+      },
+      matcher: function(item){
+          return true;
+      },
+      updater: function(item){
+          $('#userId').val(map[item].id);
+          $('#userName').blur();
+          return item;
       }
   });
-
-
-  // $('#userName').typeahead({
-  //     source: function(input, process){
-  //         $('#userId').val("");
-  //         $.get('ajax', 'q='+input, function(data) {
-  //             map = {};
-  //             usernames = [];
-        
-  //             $.each(JSON.parse(data), function (i, user) {
-  //                 map[user.name] = user;
-  //                 usernames.push(user.name);
-  //             });
-        
-  //             process(usernames);
-  //         });
-  //     },
-  //     matcher: function(item){
-  //         return true;
-  //     },
-  //     updater: function(item){
-  //         $('#userId').val(map[item].id);
-  //         $('#userName').blur();
-  //         return item;
-  //     }
-  // });
 
   $('#userName').click(function(){
       $('#userName').val("");
