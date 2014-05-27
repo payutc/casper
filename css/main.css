@@ -40,3 +40,6 @@ body {
 .navbar .navbar-brand {
   padding: 5px 20px 5px;
 }
+
+.amount-container {width: 120px;}
+.amount-selector {width: 90px;}

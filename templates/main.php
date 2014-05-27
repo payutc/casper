@@ -16,7 +16,7 @@
             <form action="reload" method="post" class="well form-inline" role="form">
                 <div class="row">
                     <div class="col-xs-5">
-                        <div class="input-group">
+                        <div class="input-group amount-container">
                             <?php
                             if(isset($flash['reload_value'])) {
                                 $reload_value = $flash['reload_value'];
@@ -24,7 +24,7 @@
                                 $reload_value = "";
                             }
                             ?>
-                            <input name="montant" type="number" placeholder="0,00" class="form-control" min="<?php echo $minReload/100?>" max="<?php echo $maxReload/100?>" value="<?php echo $reload_value ?>" step="0.01" />
+                            <input name="montant" type="number" placeholder="0,00" class="form-control amount-selector" min="<?php echo $minReload/100?>" max="<?php echo $maxReload/100?>" value="<?php echo $reload_value ?>" step="0.01" />
                             <span class="input-group-addon">€</span>
                         </div>
                     </div>
@@ -58,8 +58,8 @@
                 <input class="form-control" name="message" placeholder="Message" type="text" />
             </p>
             <p>
-                <div class="input-group">
-                    <input name="montant" placeholder="0,00" type="number" class="form-control" min="0" max="<?php echo $userDetails["credit"] ?>" step="0.01" />
+                <div class="input-group amount-container">
+                    <input name="montant" placeholder="0,00" type="number" class="form-control amount-selector" min="0" max="<?php echo $userDetails["credit"] ?>" step="0.01" />
                     <span class="input-group-addon">€</span>
                 </div>
             </p>
@@ -137,7 +137,7 @@
                 </tr>
             <?php endforeach ?>
         </table>
-        <div class="pagination pagination-centered"><ul id="paging"></ul></div>
+        <div class="center"><ul id="paging" class="pagination"></ul></div>
     </div>
 </div>
 <script type="text/javascript">

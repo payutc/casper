@@ -144,29 +144,59 @@ $(document).ready(function(){
   
   // --- Virement
   $('#userName').typeahead({
+      hint: true,
+      highlight: true,
+      minLength: 1
+    },
+    {
+      name: 'userName',
+      displayKey: 'value',
+      source: function (query, process) {
+        return $.get('ajax', 'q='+input, function (data) {
+            return process(data.options);
+        });
+      }
       source: function(input, process){
-          $('#userId').val("");
-          $.get('ajax', 'q='+input, function(data) {
-              map = {};
-              usernames = [];
-        
-              $.each(JSON.parse(data), function (i, user) {
-                  map[user.name] = user;
-                  usernames.push(user.name);
-              });
-        
-              process(usernames);
-          });
-      },
-      matcher: function(item){
-          return true;
-      },
-      updater: function(item){
-          $('#userId').val(map[item].id);
-          $('#userName').blur();
-          return item;
+        $('#userId').val("");
+        return $.get('ajax', 'q='+input, function(data) {
+            map = {};
+            usernames = [];
+      
+            $.each(JSON.parse(data), function (i, user) {
+                map[user.name] = user;
+                usernames.push(user.name);
+            });
+      
+            return process(usernames);
+        });
       }
   });
+
+
+  // $('#userName').typeahead({
+  //     source: function(input, process){
+  //         $('#userId').val("");
+  //         $.get('ajax', 'q='+input, function(data) {
+  //             map = {};
+  //             usernames = [];
+        
+  //             $.each(JSON.parse(data), function (i, user) {
+  //                 map[user.name] = user;
+  //                 usernames.push(user.name);
+  //             });
+        
+  //             process(usernames);
+  //         });
+  //     },
+  //     matcher: function(item){
+  //         return true;
+  //     },
+  //     updater: function(item){
+  //         $('#userId').val(map[item].id);
+  //         $('#userName').blur();
+  //         return item;
+  //     }
+  // });
 
   $('#userName').click(function(){
       $('#userName').val("");
