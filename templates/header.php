@@ -22,16 +22,16 @@
   </head>
 
   <body>
-    <div class="navbar navbar-fixed-top navbar-inverse">
-      <div>
-        <div class="container">
-          <a class="navbar-brand" href=""><img src="img/payutc_rect_110.png" alt="<?php echo $title ?>"></a>
-          <div>
-            <?php if($loggedin): ?>
-            <p class="navbar-text pull-right"><a href="logout">déconnexion</a></p>
-            <?php endif ?>
-          </div>
+    <div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a href="#" class="navbar-brand">Bootstrap theme</a>
         </div>
+        <div class="navbar-collapse collapse">
+          <?php if($loggedin): ?>
+          <p class="navbar-text navbar-right"><a href="logout">déconnexion</a></p>
+          <?php endif ?>
+        </div><!--/.nav-collapse -->
       </div>
     </div>
 
