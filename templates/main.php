@@ -13,19 +13,25 @@
             <?php if(isset($flash['reload_ok'])): ?>
                 <div class="alert alert-success"><?php echo $flash['reload_ok'] ?></div>
             <?php endif ?>
-            <form action="reload" method="post" class="well form-inline">
-                <div class="input-group">
-                    <?php
-                    if(isset($flash['reload_value'])) {
-                        $reload_value = $flash['reload_value'];
-                    } else {
-                        $reload_value = "";
-                    }
-                    ?>
-                    <input name="montant" type="number" placeholder="0,00" class="col-md-1" min="<?php echo $minReload/100?>" max="<?php echo $maxReload/100?>" value="<?php echo $reload_value ?>" step="0.01" />
-                    <span class="input-group-addon">€</span>
-                </div>
-                <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-shopping-cart glyphicon glyphicon-white"></i> Recharger</button>                    
+            <form action="reload" method="post" class="well form-inline" role="form">
+                <div class="row">
+                    <div class="col-xs-5">
+                        <div class="input-group">
+                            <?php
+                            if(isset($flash['reload_value'])) {
+                                $reload_value = $flash['reload_value'];
+                            } else {
+                                $reload_value = "";
+                            }
+                            ?>
+                            <input name="montant" type="number" placeholder="0,00" class="form-control" min="<?php echo $minReload/100?>" max="<?php echo $maxReload/100?>" value="<?php echo $reload_value ?>" step="0.01" />
+                            <span class="input-group-addon">€</span>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <button type="submit" class="btn btn-primary "><i class="glyphicon glyphicon-shopping-cart glyphicon glyphicon-white"></i> Recharger</button>
+                    </div>
+                </div>                 
             </form>
         <?php else: ?>
             <div class="alert alert-success">
@@ -45,15 +51,15 @@
         <?php endif ?>
         <form action="virement" method="post" class="well form-inline">
             <p>
-                <input id="userName" name="userName" placeholder="Destinataire" type="text" autocomplete="off"/>
+                <input class="form-control" id="userName" name="userName" placeholder="Destinataire" type="text" autocomplete="off"/>
                 <input id="userId" name="userId" type="hidden" />
             </p>
             <p>
-                <input name="message" placeholder="Message" type="text" />
+                <input class="form-control" name="message" placeholder="Message" type="text" />
             </p>
             <p>
                 <div class="input-group">
-                    <input name="montant" placeholder="0,00" type="number" class="col-md-1" min="0" max="<?php echo $userDetails["credit"] ?>" step="0.01" />
+                    <input name="montant" placeholder="0,00" type="number" class="form-control" min="0" max="<?php echo $userDetails["credit"] ?>" step="0.01" />
                     <span class="input-group-addon">€</span>
                 </div>
             </p>

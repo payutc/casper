@@ -55,10 +55,12 @@
                             <?php if($canReload): ?>
                             <td>
                                 <?php if($solde >= $total): ?>
-                                <label class="checkbox">
-                                    <input type="checkbox" name="reload" id="reload" />
-                                    Rechargement
-                                </label>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="reload" id="reload" />
+                                        Rechargement
+                                    </label>
+                                </div>
                                 <?php else: ?>
                                     Rechargement
                                 <?php endif ?>
@@ -66,7 +68,7 @@
                             <td style="text-align:right">
                                 <div class="input-group">
 
-                                    <input id="montant" name="montant" type="number" placeholder="0,00" class="col-md-1" min="<?php echo $minChamp/100 ?>" max="<?php echo $maxChamp/100 ?>" value="<?php echo ($total > $solde) ? $minChamp/100 : 0 ?>" step="0.01"<?php echo ($total > $solde) ? '' : ' disabled="disabled"' ?> />
+                                    <input id="montant" name="montant" type="number" placeholder="0,00" class="form-control" min="<?php echo $minChamp/100 ?>" max="<?php echo $maxChamp/100 ?>" value="<?php echo ($total > $solde) ? $minChamp/100 : 0 ?>" step="0.01"<?php echo ($total > $solde) ? '' : ' disabled="disabled"' ?> />
                                     <span class="input-group-addon">€</span>
                                 </div>
                             </td>

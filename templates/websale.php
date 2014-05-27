@@ -33,8 +33,8 @@
                     <p><a href="#" class="btn btn-primary" title="Je n'ai pas de compte payutc" id="noaccount"/>Je n'ai pas de compte payutc</a></p>
                 </div>
                 <div id="boutons2">
-                    <p>
-                        <label class="checkbox">
+                    <p class="checkbox">
+                        <label>
                             <input type="checkbox" name="cgu" id="cgu"> J'accepte les <a href="cgu" target="_blank" >CGU</a> de payutc
                         </label>
                     </p>
