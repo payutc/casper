@@ -1,20 +1,20 @@
-<div class="hero-unit">
+<div class="jumbotron">
     <h1>Bonjour, <?php echo $userDetails["firstname"] ?> <?php echo $userDetails["lastname"] ?> !</h1>
     <br />
     <p>Ton solde payutc est de <strong><?php echo format_amount($userDetails["credit"]) ?> €</strong></p>
 </div>
 <div class="row">
-    <div class="span4">
-        <h2>Rechargement <a name="rechargement" rel="tooltip" data-placement="bottom" data-original-title="Recharger ton compte par Carte Bancaire" class="hidden-phone"><i class="icon-question-sign"></i></a></h2>
+    <div class="col-md-4">
+        <h2>Rechargement <a name="rechargement" rel="tooltip" data-placement="bottom" data-original-title="Recharger ton compte par Carte Bancaire" class="hidden-phone"><i class="glyphicon glyphicon-question-sign"></i></a></h2>
         <?php if($canReload): ?>
             <?php if(isset($flash['reload_erreur'])): ?>
-                <div class="alert alert-error"><?php echo $flash['reload_erreur'] ?></div>
+                <div class="alert alert-danger"><?php echo $flash['reload_erreur'] ?></div>
             <?php endif ?>
             <?php if(isset($flash['reload_ok'])): ?>
                 <div class="alert alert-success"><?php echo $flash['reload_ok'] ?></div>
             <?php endif ?>
             <form action="reload" method="post" class="well form-inline">
-                <div class="input-append">
+                <div class="input-group">
                     <?php
                     if(isset($flash['reload_value'])) {
                         $reload_value = $flash['reload_value'];
@@ -22,24 +22,24 @@
                         $reload_value = "";
                     }
                     ?>
-                    <input name="montant" type="number" placeholder="0,00" class="span1" min="<?php echo $minReload/100?>" max="<?php echo $maxReload/100?>" value="<?php echo $reload_value ?>" step="0.01" />
-                    <span class="add-on">€</span>
+                    <input name="montant" type="number" placeholder="0,00" class="col-md-1" min="<?php echo $minReload/100?>" max="<?php echo $maxReload/100?>" value="<?php echo $reload_value ?>" step="0.01" />
+                    <span class="input-group-addon">€</span>
                 </div>
-                <button type="submit" class="btn btn-primary"><i class="icon-shopping-cart icon-white"></i> Recharger</button>                    
+                <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-shopping-cart glyphicon glyphicon-white"></i> Recharger</button>                    
             </form>
         <?php else: ?>
             <div class="alert alert-success">
                 Ton compte ne peut être rechargé : <?php echo $cannotReloadMessage ?>
             </div>
         <?php endif ?> 
-        <h2>Virement à un ami <a name="virement" rel="tooltip" data-placement="bottom" data-original-title="Transférer gratuitement de l'argent à un autre utilisateur de payutc" class="hidden-phone"><i class="icon-question-sign"></i></a></h2>
+        <h2>Virement à un ami <a name="virement" rel="tooltip" data-placement="bottom" data-original-title="Transférer gratuitement de l'argent à un autre utilisateur de payutc" class="hidden-phone"><i class="glyphicon glyphicon-question-sign"></i></a></h2>
         <?php if(isset($flash['virement_ok'])): ?>
             <div class="alert alert-success">
                 <?php echo $flash['virement_ok'] ?>
             </div>
         <?php endif ?>
         <?php if(isset($flash['virement_erreur'])): ?>
-            <div class="alert alert-error">
+            <div class="alert alert-danger">
                 <?php echo $flash['virement_erreur'] ?>
             </div>		                
         <?php endif ?>
@@ -52,27 +52,27 @@
                 <input name="message" placeholder="Message" type="text" />
             </p>
             <p>
-                <div class="input-append">
-                    <input name="montant" placeholder="0,00" type="number" class="span1" min="0" max="<?php echo $userDetails["credit"] ?>" step="0.01" />
-                    <span class="add-on">€</span>
+                <div class="input-group">
+                    <input name="montant" placeholder="0,00" type="number" class="col-md-1" min="0" max="<?php echo $userDetails["credit"] ?>" step="0.01" />
+                    <span class="input-group-addon">€</span>
                 </div>
             </p>
             <p>
-                <button type="submit" class="btn btn-primary"><i class="icon-arrow-right icon-white"></i> Transférer</button>
+                <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-arrow-right glyphicon glyphicon-white"></i> Transférer</button>
             </p>
                     
         </form>
-        <h2>Blocage badge <a name="virement" rel="tooltip" data-placement="bottom" data-original-title="En cas de perte ou vol de ton badge, tu peux ici bloquer et débloquer son utilisation pour payutc" class="hidden-phone"><i class="icon-question-sign"></i></a></h2>
+        <h2>Blocage badge <a name="virement" rel="tooltip" data-placement="bottom" data-original-title="En cas de perte ou vol de ton badge, tu peux ici bloquer et débloquer son utilisation pour payutc" class="hidden-phone"><i class="glyphicon glyphicon-question-sign"></i></a></h2>
         <?php if(isset($flash['block_erreur'])): ?>
-            <div class="alert alert-error"><?php echo $flash['block_erreur'] ?></div>
+            <div class="alert alert-danger"><?php echo $flash['block_erreur'] ?></div>
         <?php endif ?>
         <div class="well">
             <p>
                 État du compte : 
                 <?php if($isBlocked): ?>
-                    <span class="label label-important">Bloqué <i class="icon-remove icon-white"></i></span>
+                    <span class="label label-danger">Bloqué <i class="glyphicon glyphicon-remove glyphicon glyphicon-white"></i></span>
                 <?php else: ?>
-                <span class="label label-success">Débloqué <i class="icon-ok icon-white"></i></span>
+                <span class="label label-success">Débloqué <i class="glyphicon glyphicon-ok glyphicon glyphicon-white"></i></span>
             <?php endif ?>
         </p>
         <p>
@@ -84,7 +84,7 @@
         </p>
     </div>
 </div>
-<div class="span8" >
+<div class="col-md-8" >
     <h2>Historique</h2>
     <div>
         <table id='historique' class='table table-striped'>

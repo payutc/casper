@@ -8,7 +8,6 @@
     <!-- Le styles -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/main.css" rel="stylesheet">
-    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
     <link rel="shortcut icon" href="img/favicon.ico" />
 
     <script src="js/jquery-1.9.1.min.js"></script>
@@ -23,9 +22,9 @@
 
   <body>
     <div class="navbar navbar-fixed-top navbar-inverse">
-      <div class="navbar-inner">
+      <div>
         <div class="container">
-          <a class="brand" href=""><img src="img/payutc_rect_110.png" alt="<?php echo $title ?>"></a>
+          <a class="navbar-brand" href=""><img src="img/payutc_rect_110.png" alt="<?php echo $title ?>"></a>
           <div>
             <?php if($loggedin): ?>
             <p class="navbar-text pull-right"><a href="logout">déconnexion</a></p>

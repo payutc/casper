@@ -3,16 +3,16 @@ body {
   padding-bottom: 40px;
 }
 
-.hero-unit {
+.jumbotron {
   padding: 40px;
 }
 
 @media(max-width: 480px) {
-  .hero-unit h1 {
+  .jumbotron h1 {
     font-size: 18px;
     letter-spacing: 0;
   }
-  .hero-unit {
+  .jumbotron {
     padding: 10px;
     font-size: 14px;
   }
@@ -37,6 +37,6 @@ body {
   text-align: center;
 }
 
-.navbar .brand {
+.navbar .navbar-brand {
   padding: 5px 20px 5px;
 }

@@ -1,7 +1,7 @@
 <div class="row">
-    <div class="span4 offset4">
+    <div class="span4 col-md-offset-4">
         <?php if(isset($flash['websale_error'])): ?>
-            <div class="alert alert-error"><?php echo $flash['websale_error'] ?></div>
+            <div class="alert alert-danger"><?php echo $flash['websale_error'] ?></div>
         <?php endif ?>
             <h1>Bienvenue</h1>
 
