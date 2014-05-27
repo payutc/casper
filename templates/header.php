@@ -25,7 +25,7 @@
     <div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
-          <a href="#" class="navbar-brand">Bootstrap theme</a>
+          <a class="navbar-brand" href=""><img src="img/payutc_rect_110.png" alt="<?php echo $title ?>"></a>
         </div>
         <div class="navbar-collapse collapse">
           <?php if($loggedin): ?>
