@@ -161,7 +161,7 @@ $(document).ready(function(){
                 map[user.name] = user;
                 usernames.push(user.name);
             });
-      
+            console.log(usernames);
             return process(usernames);
         });
       }
