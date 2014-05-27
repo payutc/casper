@@ -151,11 +151,6 @@ $(document).ready(function(){
     {
       name: 'userName',
       displayKey: 'value',
-      source: function (query, process) {
-        return $.get('ajax', 'q='+input, function (data) {
-            return process(data.options);
-        });
-      }
       source: function(input, process){
         $('#userId').val("");
         return $.get('ajax', 'q='+input, function(data) {
