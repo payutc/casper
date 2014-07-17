@@ -366,7 +366,7 @@ $app->get('/login', function() use ($app) {
         }
         
         // Redirection vers le CAS
-        $app->redirect(JsonClientFactory::getInstance()->getClient("MYACCOUNT")->getCasUrl()."/login?service=".Config::get("casper_url").'login');
+        $app->redirect(JsonClientFactory::getInstance()->getClient("MYACCOUNT")->getCasUrl()."login?service=".Config::get("casper_url").'login');
     } else {
         // Connexion au serveur avec le ticket CAS
         try {
