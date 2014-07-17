@@ -84,3 +84,92 @@ function selectPage(pageIndex){
           rows[idx].style.display ='none';
   }
 }
+
+Number.prototype.formatMoney = function(c, d, t){
+var n = this, 
+    c = isNaN(c = Math.abs(c)) ? 2 : c, 
+    d = d == undefined ? "," : d, 
+    t = t == undefined ? "" : t, 
+    s = n < 0 ? "-" : "+", 
+    i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", 
+    j = (j = i.length) > 3 ? j % 3 : 0;
+   return s + " " + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "") + " €";
+ };
+
+function updateCalcul(){
+  if($("#montant").val() > 0){
+    $("#submitBut").val("Recharger et payer");
+  }
+  else {
+    $("#submitBut").val("Payer");
+  }
+  var finalAmount = parseFloat($("#final").val()) + parseFloat($("#montant").val());
+
+  $("#finalAmount").html(finalAmount.formatMoney());
+}
+
+$(document).ready(function(){
+  // --- Validation
+  $("#reloadLine").popover();
+
+  $("#montant").change(updateCalcul);
+
+  $("#boutons2").hide();
+  
+  $("#noaccount").click(function(e){
+    e.preventDefault();
+    $("#gopay").attr("disabled", "disabled");
+    $("#boutons1").hide();
+    $("#boutons2").show();
+  });
+  
+  $("#cgu").change(function(){
+    if($(this).is(":checked")){
+      $("#gopay").removeAttr("disabled");
+    }
+    else {
+      $("#gopay").attr("disabled", "disabled");
+    }
+  });
+  
+  $("#reload").change(function(){
+    if($(this).is(":checked")){
+      $("#montant").removeAttr("disabled").val(10.00);
+    }
+    else {
+      $("#montant").attr("disabled", "disabled").val(0);
+    }
+    updateCalcul();
+  });
+  
+  // --- Virement
+  $('#userName').typeahead({
+      source: function(input, process){
+          $('#userId').val("");
+          $.get('ajax', 'q='+input, function(data) {
+              map = {};
+              usernames = [];
+        
+              $.each(JSON.parse(data), function (i, user) {
+                  map[user.name] = user;
+                  usernames.push(user.name);
+              });
+        
+              process(usernames);
+          });
+      },
+      matcher: function(item){
+          return true;
+      },
+      updater: function(item){
+          $('#userId').val(map[item].id);
+          $('#userName').blur();
+          return item;
+      }
+  });
+
+  $('#userName').click(function(){
+      $('#userName').val("");
+      $('#userId').val("");
+  })
+});

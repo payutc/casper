@@ -9,6 +9,11 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/main.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="img/favicon.ico" />
+
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/casper.js"></script>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -20,9 +25,11 @@
     <div class="navbar navbar-fixed-top navbar-inverse">
       <div class="navbar-inner">
         <div class="container">
-          <a class="brand" href=""><?php echo $title ?></a>
+          <a class="brand" href=""><img src="img/payutc_rect_110.png" alt="<?php echo $title ?>"></a>
           <div>
-            <p class="navbar-text pull-right"><a href="login">déconnexion</a></p>
+            <?php if($loggedin): ?>
+            <p class="navbar-text pull-right"><a href="logout">déconnexion</a></p>
+            <?php endif ?>
           </div>
         </div>
       </div>

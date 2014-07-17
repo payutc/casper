@@ -28,7 +28,7 @@ class JsonClientFactory {
     // Get a client for a specific $service
     public function getClient($service){
         if(!isset($this->clients[$service])){
-            throw new UnknownClientException();
+            throw new UnknownClientException("Unknown client $service");
         }
         
         if(isset($_SESSION["casper_json_client_cookie"])){

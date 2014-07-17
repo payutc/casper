@@ -15,9 +15,11 @@
             <p>payutc est hébergé sur le réseau. Son utilisation génère donc des traces pouvant être utilisées en cas de menace sur la sécurité du réseau, ou de demande des autorités compétentes, à des fins d’identification d’actions illicites et de leurs auteurs. Pour plus de détails, nous vous invitons à consulter la <a href="http://www.utc.fr/wiki/charte_informatique/charte.pdf" target="_blank">Charte du bon usage des moyens et ressources informatiques</a>. Ce document rappelle également que l'article L.323-1 du Nouveau code pénal prévoit que « le fait d’accéder ou de se maintenir, frauduleusement, dans tout ou partie d’un système de traitement automatisé de données est puni d’un an d’emprisonnement et de 15 000 € d’amende ». Dans le cas de l'introduction, la suppression ou la modification frauduleuses de données dans un système informatique, la peine est portée à trois ans 
     d'emprisonnement et 45 000 € d'amende.</p>
 
+            <?php if($form) { ?>
             <form action="register" method="post">
                 <input type="submit" class="btn btn-primary btn-large" value="J'accepte" />
             </form> 
+            <?php } ?>
         </div>
     </div>
 </div>
