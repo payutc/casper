@@ -32,36 +32,38 @@
                 Ton compte ne peut être rechargé : <?php echo $cannotReloadMessage ?>
             </div>
         <?php endif ?> 
-        <h2>Virement à un ami <a name="virement" rel="tooltip" data-placement="bottom" data-original-title="Transférer gratuitement de l'argent à un autre utilisateur de payutc" class="hidden-phone"><i class="icon-question-sign"></i></a></h2>
-        <?php if(isset($flash['virement_ok'])): ?>
-            <div class="alert alert-success">
-                <?php echo $flash['virement_ok'] ?>
-            </div>
-        <?php endif ?>
-        <?php if(isset($flash['virement_erreur'])): ?>
-            <div class="alert alert-error">
-                <?php echo $flash['virement_erreur'] ?>
-            </div>		                
-        <?php endif ?>
-        <form action="virement" method="post" class="well form-inline">
-            <p>
-                <input id="userName" name="userName" placeholder="Destinataire" type="text" autocomplete="off"/>
-                <input id="userId" name="userId" type="hidden" />
-            </p>
-            <p>
-                <input name="message" placeholder="Message" type="text" />
-            </p>
-            <p>
-                <div class="input-append">
-                    <input name="montant" placeholder="0,00" type="number" class="span1" min="0" max="<?php echo $userDetails["credit"] ?>" step="0.01" />
-                    <span class="add-on">€</span>
+        <?php if($canTransfer): ?>
+            <h2>Virement à un ami <a name="virement" rel="tooltip" data-placement="bottom" data-original-title="Transférer gratuitement de l'argent à un autre utilisateur de payutc" class="hidden-phone"><i class="icon-question-sign"></i></a></h2>
+            <?php if(isset($flash['virement_ok'])): ?>
+                <div class="alert alert-success">
+                    <?php echo $flash['virement_ok'] ?>
                 </div>
-            </p>
-            <p>
-                <button type="submit" class="btn btn-primary"><i class="icon-arrow-right icon-white"></i> Transférer</button>
-            </p>
-                    
-        </form>
+            <?php endif ?>
+            <?php if(isset($flash['virement_erreur'])): ?>
+                <div class="alert alert-error">
+                    <?php echo $flash['virement_erreur'] ?>
+                </div>		                
+            <?php endif ?>
+            <form action="virement" method="post" class="well form-inline">
+                <p>
+                    <input id="userName" name="userName" placeholder="Destinataire" type="text" autocomplete="off"/>
+                    <input id="userId" name="userId" type="hidden" />
+                </p>
+                <p>
+                    <input name="message" placeholder="Message" type="text" />
+                </p>
+                <p>
+                    <div class="input-append">
+                        <input name="montant" placeholder="0,00" type="number" class="span1" min="0" max="<?php echo $userDetails["credit"] ?>" step="0.01" />
+                        <span class="add-on">€</span>
+                    </div>
+                </p>
+                <p>
+                    <button type="submit" class="btn btn-primary"><i class="icon-arrow-right icon-white"></i> Transférer</button>
+                </p>
+                        
+            </form>
+        <?php endif ?>
         <h2>Blocage badge <a name="virement" rel="tooltip" data-placement="bottom" data-original-title="En cas de perte ou vol de ton badge, tu peux ici bloquer et débloquer son utilisation pour payutc" class="hidden-phone"><i class="icon-question-sign"></i></a></h2>
         <?php if(isset($flash['block_erreur'])): ?>
             <div class="alert alert-error"><?php echo $flash['block_erreur'] ?></div>

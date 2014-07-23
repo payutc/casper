@@ -55,6 +55,8 @@ $app->get('/', function() use($app) {
     
     $pageData["isBlocked"] = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->isBlockedMe();
     
+    $pageData["canTransfer"] = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->isCotisant();
+
     $account = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->historique();
     $pageData["historique"] = $account->historique;
     
