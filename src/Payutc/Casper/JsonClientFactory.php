@@ -10,11 +10,12 @@ class JsonClientFactory {
     
     // Load clients from session if any
     public function __construct(){
-        if(isset($_SESSION["casper_clients"])){
-            $this->clients = $_SESSION["casper_clients"];
+        $this->clients = array();
+        if(isset($_SESSION["casper_json_client_cookie"])) {
+            $this->cookie = $_SESSION["casper_json_client_cookie"];
         }
         else {
-            $this->clients = array();
+            $this->cookie = array();
         }
     }
     
@@ -22,6 +23,7 @@ class JsonClientFactory {
     public function createClient($service){
         if(!isset($this->clients[$service])) {
             $this->clients[$service] = new \JsonClient\AutoJsonClient(Config::get("server_url"), $service);
+            $this->clients[$service]->cookie = $this->cookie;
         }
     }
     
@@ -29,10 +31,6 @@ class JsonClientFactory {
     public function getClient($service){
         if(!isset($this->clients[$service])){
             throw new UnknownClientException("Unknown client $service");
-        }
-        
-        if(isset($_SESSION["casper_json_client_cookie"])){
-            $this->clients[$service]->cookie = $_SESSION["casper_json_client_cookie"];
         }
         
         return $this->clients[$service];
