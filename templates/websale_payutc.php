@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-md-6 col-md-offset-3">
+    <div class="col-md-4 col-md-offset-4">
         <?php if(isset($flash['websale_error'])): ?>
             <div class="alert alert-danger"><?php echo $flash['websale_error'] ?></div>
         <?php endif ?>
@@ -66,10 +66,13 @@
                                 <?php endif ?>
                             </td>
                             <td style="text-align:right">
-                                <div class="input-group">
-
-                                    <input id="montant" name="montant" type="number" placeholder="0,00" class="form-control" min="<?php echo $minChamp/100 ?>" max="<?php echo $maxChamp/100 ?>" value="<?php echo ($total > $solde) ? $minChamp/100 : 0 ?>" step="0.01"<?php echo ($total > $solde) ? '' : ' disabled="disabled"' ?> />
-                                    <span class="input-group-addon">€</span>
+                                <div class="row">
+                                    <div class="col-xs-7 pull-right">
+                                        <div class="input-group">
+                                            <input id="montant" name="montant" type="number" placeholder="0,00" class="form-control" min="<?php echo $minChamp/100 ?>" max="<?php echo $maxChamp/100 ?>" value="<?php echo ($total > $solde) ? $minChamp/100 : 0 ?>" step="0.01"<?php echo ($total > $solde) ? '' : ' disabled="disabled"' ?> />
+                                            <span class="input-group-addon">€</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
                             <?php else: ?>
