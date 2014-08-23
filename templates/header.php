@@ -8,11 +8,11 @@
     <!-- Le styles -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/main.css" rel="stylesheet">
-    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
     <link rel="shortcut icon" href="img/favicon.ico" />
 
     <script src="js/jquery-1.9.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/typeahead.js"></script>
     <script src="js/casper.js"></script>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -22,16 +22,16 @@
   </head>
 
   <body>
-    <div class="navbar navbar-fixed-top navbar-inverse">
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="brand" href=""><img src="img/payutc_rect_110.png" alt="<?php echo $title ?>"></a>
-          <div>
-            <?php if($loggedin): ?>
-            <p class="navbar-text pull-right"><a href="logout">déconnexion</a></p>
-            <?php endif ?>
-          </div>
+    <div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href=""><img src="img/payutc_rect_110.png" alt="<?php echo $title ?>"></a>
         </div>
+        <div class="navbar-collapse collapse">
+          <?php if($loggedin): ?>
+          <p class="navbar-text navbar-right"><a href="logout">déconnexion</a></p>
+          <?php endif ?>
+        </div><!--/.nav-collapse -->
       </div>
     </div>
 

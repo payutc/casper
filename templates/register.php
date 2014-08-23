@@ -1,7 +1,7 @@
 <div class="row">
-    <div class="span12">
+    <div class="col-md-12">
         <?php if(isset($flash['register_erreur'])): ?>
-            <div class="alert alert-error"><?php echo $flash['register_erreur'] ?></div>
+            <div class="alert alert-danger"><?php echo $flash['register_erreur'] ?></div>
         <?php endif ?>
         <div class="well">
             <h1>Bienvenue sur payutc</h1>

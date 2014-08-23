@@ -1,7 +1,7 @@
 <div class="row">
-    <div class="span4 offset4">
+    <div class="col-md-6 col-md-offset-3">
         <?php if(isset($flash['websale_error'])): ?>
-            <div class="alert alert-error"><?php echo $flash['websale_error'] ?></div>
+            <div class="alert alert-danger"><?php echo $flash['websale_error'] ?></div>
         <?php endif ?>
             <h1>Bonjour <?php echo $firstname ?></h1>
 
@@ -55,25 +55,27 @@
                             <?php if($canReload): ?>
                             <td>
                                 <?php if($solde >= $total): ?>
-                                <label class="checkbox">
-                                    <input type="checkbox" name="reload" id="reload" />
-                                    Rechargement
-                                </label>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="reload" id="reload" />
+                                        Rechargement
+                                    </label>
+                                </div>
                                 <?php else: ?>
                                     Rechargement
                                 <?php endif ?>
                             </td>
                             <td style="text-align:right">
-                                <div class="input-append">
+                                <div class="input-group">
 
-                                    <input id="montant" name="montant" type="number" placeholder="0,00" class="span1" min="<?php echo $minChamp/100 ?>" max="<?php echo $maxChamp/100 ?>" value="<?php echo ($total > $solde) ? $minChamp/100 : 0 ?>" step="0.01"<?php echo ($total > $solde) ? '' : ' disabled="disabled"' ?> />
-                                    <span class="add-on">€</span>
+                                    <input id="montant" name="montant" type="number" placeholder="0,00" class="form-control" min="<?php echo $minChamp/100 ?>" max="<?php echo $maxChamp/100 ?>" value="<?php echo ($total > $solde) ? $minChamp/100 : 0 ?>" step="0.01"<?php echo ($total > $solde) ? '' : ' disabled="disabled"' ?> />
+                                    <span class="input-group-addon">€</span>
                                 </div>
                             </td>
                             <?php else: ?>
                             <td colspan="2">
                                 Rechargement
-                                <div class="alert alert-error">
+                                <div class="alert alert-danger">
                                     <?php echo $cannotReloadMessage ?><br />
                                 </div>
                             </td>
@@ -88,7 +90,7 @@
                 <?php if($solde >= $total || $canReload): ?>
                 <input type="submit" class="btn btn-primary" value="<?php echo ($total-$solde > 0) ? 'Recharger et payer' : 'Payer' ?>" id="submitBut"/>
                 <?php else: ?>
-                    <div class="alert alert-error">
+                    <div class="alert alert-danger">
                         Tu ne peux pas terminer cette transaction car ton solde est trop faible et tu ne peux pas recharger.
                     </div>
                     <a class="btn btn-primary" href="<?php echo $logoutUrl ?>" title="Paiement transaction">Se déconnecter et choisir un autre moyen de paiement</a>
