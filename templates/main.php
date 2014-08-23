@@ -5,7 +5,7 @@
 </div>
 <div class="row">
     <div class="col-md-4">
-        <h2>Rechargement <a name="rechargement" rel="tooltip" data-placement="bottom" data-original-title="Recharger ton compte par Carte Bancaire" class="hidden-phone"><i class="glyphicon glyphicon-question-sign"></i></a></h2>
+        <h2><a name="rechargement" rel="tooltip" data-placement="bottom" data-original-title="Recharger ton compte par Carte Bancaire" class="noul">Rechargement</a></h2>
         <?php if($canReload): ?>
             <?php if(isset($flash['reload_erreur'])): ?>
                 <div class="alert alert-danger"><?php echo $flash['reload_erreur'] ?></div>
@@ -38,7 +38,7 @@
                 Ton compte ne peut être rechargé : <?php echo $cannotReloadMessage ?>
             </div>
         <?php endif ?> 
-        <h2>Virement à un ami <a name="virement" rel="tooltip" data-placement="bottom" data-original-title="Transférer gratuitement de l'argent à un autre utilisateur de payutc" class="hidden-phone"><i class="glyphicon glyphicon-question-sign"></i></a></h2>
+        <h2><a name="virement" rel="tooltip" data-placement="bottom" data-original-title="Transférer gratuitement de l'argent à un autre utilisateur de payutc" class="noul">Virement à un ami</a></h2>
         <?php if(isset($flash['virement_ok'])): ?>
             <div class="alert alert-success">
                 <?php echo $flash['virement_ok'] ?>
@@ -73,7 +73,7 @@
                 </div>
             </div>
         </form>
-        <h2>Blocage badge <a name="virement" rel="tooltip" data-placement="bottom" data-original-title="En cas de perte ou vol de ton badge, tu peux ici bloquer et débloquer son utilisation pour payutc" class="hidden-phone"><i class="glyphicon glyphicon-question-sign"></i></a></h2>
+        <h2><a name="blocage" rel="tooltip" data-placement="bottom" data-original-title="En cas de perte ou vol de ton badge, tu peux ici bloquer et débloquer son utilisation pour payutc" class="noul">Blocage badge</a></h2>
         <?php if(isset($flash['block_erreur'])): ?>
             <div class="alert alert-danger"><?php echo $flash['block_erreur'] ?></div>
         <?php endif ?>
