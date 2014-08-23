@@ -2,6 +2,8 @@
 
 namespace Payutc\Casper;
 
+use \Payutc\Client\AutoJsonClient;
+
 class UnknownClientException extends \Exception {}
 
 class JsonClientFactory {
@@ -22,7 +24,7 @@ class JsonClientFactory {
     // Create a client for a specific $service if it doesn't exist
     public function createClient($service){
         if(!isset($this->clients[$service])) {
-            $this->clients[$service] = new \JsonClient\AutoJsonClient(Config::get("server_url"), $service);
+            $this->clients[$service] = new AutoJsonClient(Config::get("server_url"), $service);
             $this->clients[$service]->cookie = $this->cookie;
         }
     }

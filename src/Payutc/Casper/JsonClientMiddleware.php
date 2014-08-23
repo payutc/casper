@@ -3,6 +3,7 @@ namespace Payutc\Casper;
 
 use \Payutc\Casper\Config;
 use \Payutc\Casper\JsonClientFactory;
+use \Payutc\Client\JsonException;
 
 class JsonClientMiddleware extends \Slim\Middleware
 {
@@ -38,7 +39,7 @@ class JsonClientMiddleware extends \Slim\Middleware
                     JsonClientFactory::getInstance()->getClient("WEBSALECONFIRM")->loginApp(array(
                         "key" => Config::get("application_key")
                     ));
-                } catch (\JsonClient\JsonException $e) {
+                } catch (JsonException $e) {
                     $app->getLog()->error("Application login error for WEBSALECONFIRM: ".$e->getMessage());
                     throw $e;
                 }
@@ -75,7 +76,7 @@ class JsonClientMiddleware extends \Slim\Middleware
                     JsonClientFactory::getInstance()->getClient("MYACCOUNT")->loginApp(array(
                         "key" => Config::get("application_key")
                     ));
-                } catch (\JsonClient\JsonException $e) {
+                } catch (JsonException $e) {
                     $app->getLog()->error("Application login error: ".$e->getMessage());
                     throw $e;
                 }
@@ -95,7 +96,7 @@ class JsonClientMiddleware extends \Slim\Middleware
             // Run inner middleware and application
             $this->next->call();
         }
-        catch(\JsonClient\JsonException $e){
+        catch(JsonException $e){
             if($app->request()->getResourceUri() != '/login' && $e->getType() == "Payutc\Exception\CheckRightException"){
                 $app->getLog()->debug("Caught CheckRightException (".$e->getMessage()."), redirect to login route");
                 $app->response()->redirect($app->urlFor('login'));

@@ -48,7 +48,7 @@ $app->get('/', function() use($app) {
         $pageData["maxReload"] = $reloadInfo->max_reload;
         $pageData["minReload"] = $reloadInfo->min;
     }
-    catch(\JsonClient\JsonException $e){
+    catch(JsonException $e){
         $pageData["canReload"] = false;
         $pageData["cannotReloadMessage"] = $e->getMessage();
     }
@@ -77,7 +77,7 @@ $app->get('/block', function() use ($app) {
             "blocage" => true
         ));        
     }
-    catch(\JsonClient\JsonException $e){
+    catch(JsonException $e){
         $app->flash('block_erreur', $e->getMessage());
         $app->getLog()->error("Block failed: ".$e->getMessage());
     }
@@ -91,7 +91,7 @@ $app->get('/unblock', function() use ($app) {
             "blocage" => false
         ));        
     }
-    catch(\JsonClient\JsonException $e){
+    catch(JsonException $e){
         $app->flash('block_erreur', $e->getMessage());
         $app->getLog()->error("Unblock failed: ".$e->getMessage());
     }
@@ -125,7 +125,7 @@ $app->post('/reload', function() use ($app) {
         ));
         $app->redirect($reloadUrl);
     }
-    catch(\JsonClient\JsonException $e){
+    catch(JsonException $e){
         $app->flash('reload_erreur', $e->getMessage());
         $app->flash('reload_value', $amount/100);
         $app->getLog()->error("Reload failed: ".$e->getMessage());
@@ -147,7 +147,7 @@ $app->post('/virement', function() use ($app) {
         
         $app->flash('virement_ok', 'Le virement de '.format_amount($montant).' € a réussi.');
     }
-    catch(\JsonClient\JsonException $e){
+    catch(JsonException $e){
         $app->flash('virement_erreur', $e->getMessage());
     }
     
@@ -178,7 +178,7 @@ $app->post('/register', function() use ($app) {
         // Si ok, go vers la page d'accueil
         $app->redirect($app->urlFor('home'));
     }
-    catch(\JsonClient\JsonException $e){
+    catch(JsonException $e){
         // Si on a une erreur on l'affiche
         $app->flash('register_erreur', $e->getMessage());
         
@@ -243,7 +243,7 @@ $app->get('/validation', function() use ($app) {
             $maxReload = $reloadInfo->max_reload;
             $minReload = $reloadInfo->min;
         }
-        catch(\JsonClient\JsonException $e){
+        catch(JsonException $e){
             $canReload = false;
             $cannotReloadMessage = $e->getMessage();
         }
@@ -376,7 +376,7 @@ $app->get('/login', function() use ($app) {
                 "ticket" => $_GET["ticket"],
                 "service" => Config::get("casper_url").'login'
             ));
-        } catch (\JsonClient\JsonException $e) {
+        } catch (JsonException $e) {
             // Si l'utilisateur n'existe pas, go inscription
             if($e->getType() == "Payutc\Exception\UserNotFound"){
                 // On doit garder le cookie car le serveur garde le login de son côté
@@ -418,7 +418,7 @@ $app->get('/logout', function() use ($app) {
     try {
         JsonClientFactory::getInstance()->getClient("MYACCOUNT")->logout();        
     }
-    catch (\JsonClient\JsonException $e){
+    catch (JsonException $e){
         // No worries, we'll just continue
     }
     
