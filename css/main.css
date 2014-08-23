@@ -45,3 +45,8 @@ body {
 .amount-selector {width: 90px;}
 
 .typeahead{z-index:1051;margin-top:2px;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
+
+a.noul:hover, a.noul {
+text-decoration: none;
+color: inherit;
+}

@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-md-6 col-md-offset-3">
+    <div class="col-md-4 col-md-offset-4">
         <?php if(isset($flash['websale_error'])): ?>
             <div class="alert alert-danger"><?php echo $flash['websale_error'] ?></div>
         <?php endif ?>
