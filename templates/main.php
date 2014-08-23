@@ -49,24 +49,29 @@
                 <?php echo $flash['virement_erreur'] ?>
             </div>		                
         <?php endif ?>
-        <form action="virement" method="post" class="well form-inline">
-            <p>
-                <input class="form-control" id="userName" name="userName" placeholder="Destinataire" type="text" autocomplete="off"/>
-                <input id="userId" name="userId" type="hidden" />
-            </p>
-            <p>
-                <input class="form-control" name="message" placeholder="Message" type="text" />
-            </p>
-            <p>
-                <div class="input-group amount-container">
-                    <input name="montant" placeholder="0,00" type="number" class="form-control amount-selector" min="0" max="<?php echo $userDetails["credit"] ?>" step="0.01" />
-                    <span class="input-group-addon">€</span>
+        <form action="virement" method="post" class="well form-horizontal">
+            <div class="form-group">
+                <div class="col-sm-10">
+                    <input class="form-control" id="userName" name="userName" placeholder="Destinataire" type="text" autocomplete="off"/>
+                    <input id="userId" name="userId" type="hidden" />
                 </div>
-            </p>
-            <p>
-                <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-arrow-right glyphicon glyphicon-white"></i> Transférer</button>
-            </p>
-                    
+            </div>
+            <div class="form-group">
+                <div class="col-sm-10">
+                    <input class="form-control" name="message" placeholder="Message" type="text" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-5">
+                    <div class="input-group amount-container">
+                        <input name="montant" placeholder="0,00" type="number" class="form-control amount-selector" min="0" max="<?php echo $userDetails["credit"] ?>" step="0.01" />
+                        <span class="input-group-addon">€</span>
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-arrow-right glyphicon glyphicon-white"></i> Transférer</button>
+                </div>
+            </div>
         </form>
         <h2>Blocage badge <a name="virement" rel="tooltip" data-placement="bottom" data-original-title="En cas de perte ou vol de ton badge, tu peux ici bloquer et débloquer son utilisation pour payutc" class="hidden-phone"><i class="glyphicon glyphicon-question-sign"></i></a></h2>
         <?php if(isset($flash['block_erreur'])): ?>
